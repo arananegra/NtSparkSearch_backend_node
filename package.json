@@ -1,7 +1,6 @@
 {
-  "name": "node-typescript-boilerplate",
-  "version": "0.0.0",
-  "description": "Minimalistic boilerplate to quick-start Node.js development in TypeScript.",
+  "name": "ntsparksearch_backend_node",
+  "version": "1.0.0",
   "engineStrict": true,
   "engines": {
     "node": ">= 6.9.0"
@@ -26,16 +25,8 @@
     "test-only": "jest --coverage",
     "test:watch": "jest --watch"
   },
-  "author": "Jakub Synowiec <github@jakubsynowiec.info>",
+  "author": "Álvaro Gómez Jáuregui <arananegrayeye@gmail.com>",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/jsynowiec/node-typescript-boilerplate.git"
-  },
-  "bugs": {
-    "url": "https://github.com/jsynowiec/node-typescript-boilerplate/issues"
-  },
-  "homepage": "https://github.com/jsynowiec/node-typescript-boilerplate#readme",
   "dependencies": {
     "tslib": "~1.7.1"
   }
