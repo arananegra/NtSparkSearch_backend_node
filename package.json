@@ -1,33 +1,67 @@
 {
-  "name": "ntsparksearch_backend_node",
+  "name": "ntsparksearch-backend",
   "version": "1.0.0",
-  "engineStrict": true,
-  "engines": {
-    "node": ">= 6.9.0"
+  "description": "NtSparkSearch",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm install && webpack --env=pro-compilation",
+    "build:dev": "npm install && webpack --env=pre-compilation",
+    "start:dev": "webpack --watch --env=pre-compilation"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org:arananegrayeye/ntsparksearch_backend_node.git"
+  },
+  "author": "Álvaro Gómez Jáuregui",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/arananegrayeye/ntsparksearch_backend_node#readme",
+  "dependencies": {
+    "axios": "^0.16.2",
+    "body-parser": "^1.17.2",
+    "core-js": "^2.4.1",
+    "express": "^4.15.3",
+    "istanbul-instrumenter-loader": "^3.0.0",
+    "json-object-mapper": "^1.5.1",
+    "mongodb": "^2.2.31",
+    "q": "^1.5.0",
+    "reflect-metadata": "^0.1.10"
   },
   "devDependencies": {
-    "@types/jest": "~20.0.8",
-    "@types/node": "~6.0.88",
-    "jest": "~21.0.2",
-    "rimraf": "~2.6.1",
-    "tslint": "~5.7.0",
-    "tslint-microsoft-contrib": "~5.0.1",
-    "tsutils": "~2.8.2",
-    "typescript": "~2.5.2"
-  },
-  "scripts": {
-    "clean": "rimraf coverage build tmp",
-    "build": "tsc -p tsconfig.release.json",
-    "watch": "tsc -w -p tsconfig.release.json",
-    "lint": "tslint -t stylish --type-check --project 'tsconfig.json'",
-    "pretest": "npm run lint",
-    "test": "npm run test-only",
-    "test-only": "jest --coverage",
-    "test:watch": "jest --watch"
-  },
-  "author": "Álvaro Gómez Jáuregui <arananegrayeye@gmail.com>",
-  "license": "MIT",
-  "dependencies": {
-    "tslib": "~1.7.1"
+    "@types/mongodb": "^2.2.13",
+    "@types/chai": "^4.0.2",
+    "@types/core-js": "^0.9.42",
+    "@types/express": "^4.0.36",
+    "@types/mocha": "^2.2.41",
+    "@types/node": "^8.0.33",
+    "@types/q": "^1.0.2",
+    "@types/sinon-stub-promise": "^1.1.0",
+    "@types/webpack-env": "^1.13.0",
+    "awesome-typescript-loader": "^3.2.1",
+    "babel-core": "^6.25.0",
+    "babel-loader": "^7.1.1",
+    "chai": "^4.1.1",
+    "lodash": "^4.17.4",
+    "clean-webpack-plugin": "^0.1.16",
+    "jasmine": "^2.7.0",
+    "json-loader": "^0.5.4",
+    "karma": "^1.3.0",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-coverage": "^1.1.1",
+    "karma-coverage-istanbul-reporter": "^1.3.0",
+    "karma-mocha": "^1.1.1",
+    "karma-sinon": "^1.0.5",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-typescript": "^3.0.5",
+    "karma-webpack": "^2.0.4",
+    "mocha": "^3.5.0",
+    "node": "^8.3.0",
+    "sinon": "^3.2.0",
+    "ts-loader": "^2.3.2",
+    "ts-node": "^3.3.0",
+    "typescript": "^2.4.1",
+    "webpack": "^3.5.5",
+    "webpack-dev-server": "^2.7.1",
+    "webpack-node-externals": "^1.6.0"
   }
 }

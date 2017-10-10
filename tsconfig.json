@@ -2,25 +2,20 @@
   "compilerOptions": {
     "target": "es6",
     "module": "commonjs",
-    "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
-    "jsx": "preserve",
-    "allowJs": true,
-    "importHelpers": true,
-    "alwaysStrict": true,
-    "sourceMap": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitReturns": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
+    "declaration": false,
     "noImplicitAny": false,
-    "noImplicitThis": false,
-    "strictNullChecks": false,
-    "declaration": true
+    "removeComments": true,
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "noLib": false,
+    "lib": ["es2015", "dom"],
+    "preserveConstEnums": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "types": ["webpack-env", "core-js"]
   },
-  "include": [
-    "src/**/*",
-    "__tests__/**/*"
+  "compileOnSave": false,
+  "exclude": [
+    "node_modules"
   ]
 }
