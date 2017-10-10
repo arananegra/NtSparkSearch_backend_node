@@ -1,5 +1,6 @@
 
 
+import {UserRestService} from "./UserRestService";
 export class MainServices {
 
     public constructor(application: any) {
@@ -10,7 +11,7 @@ export class MainServices {
         // new TumorLocalizationRestService(application);
         // new EconomicFundingTypeRestService(application);
         // new ExclusionInclusionCriteriaRestService(application);
-        // new UserRestService(application);
+        new UserRestService(application);
         // new RolPermissionRestService(application);
     }
 }

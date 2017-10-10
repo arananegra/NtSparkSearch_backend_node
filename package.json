@@ -6,7 +6,8 @@
   "scripts": {
     "build": "npm install && webpack --env=pro-compilation",
     "build:dev": "npm install && webpack --env=pre-compilation",
-    "start:dev": "webpack --watch --env=pre-compilation"
+    "start:dev": "webpack --watch --env=pre-compilation",
+    "start:watch-server": "cd dist/ && nodemon ntsparksearch_backend.js"
   },
   "repository": {
     "type": "git",

@@ -2,6 +2,8 @@
 // import {UserBS} from "../bs/UserBS";
 // import {ServicesRouteConstants} from "../constants/ServicesRouteConstants";
 // import {HttpConstants, JsonSerializationBS} from "mks-standard-infraestructure/dist";
+import {ServicesRouteConstants} from "../constants/ServicesRouteConstants";
+import {GeneDTO} from "../domain/GeneDTO";
 export class UserRestService {
     private _app: any;
 
@@ -15,32 +17,37 @@ export class UserRestService {
     }
 
     private searchUserById() {
-        // let userSearcher: UserSearcherDTO;
-        // let userBS: UserBS;
-        //
-        // this._app.get(ServicesRouteConstants.USER_SERVICE + "/:id", (req, res) => {
-        //     try {
-        //         userSearcher = new UserSearcherDTO();
-        //         userBS = new UserBS();
-        //
-        //         userSearcher.userIdSearchCriteria = req.params.id;
-        //
-        //         userBS.searchSingleUserById(userSearcher)
-        //             .then((singleUserFound) => {
-        //                 if (singleUserFound) {
-        //
-        //                     JsonSerializationBS.serialization(singleUserFound)
-        //                         .then((serializedObject) => {
-        //                             res.status(HttpConstants.HTTP_CODE_200).send(serializedObject);
-        //                         });
-        //                 } else {
-        //                     res.status(HttpConstants.HTTP_CODE_404);
-        //                 }
-        //             });
-        //
-        //     } catch(Exception) {
-        //         res.status(HttpConstants.HTTP_CODE_500).send("Service Unavailable");
-        //     }
-        // });
+
+        this._app.get(ServicesRouteConstants.TEST_SERVICE, (req, res) => {
+            try {
+                // userSearcher = new UserSearcherDTO();
+                // userBS = new UserBS();
+                //
+                // userSearcher.userIdSearchCriteria = req.params.id;
+
+                let geneDTO = new GeneDTO();
+
+                geneDTO._gene_id = "02";
+                geneDTO._sequence = "GATCA";
+
+                res.status(200).send(JSON.stringify(geneDTO));
+
+                // userBS.searchSingleUserById(userSearcher)
+                //     .then((singleUserFound) => {
+                //         if (singleUserFound) {
+                //
+                //             JsonSerializationBS.serialization(singleUserFound)
+                //                 .then((serializedObject) => {
+                //                     res.status(200).send(serializedObject);
+                //                 });
+                //         } else {
+                //             res.status(404);
+                //         }
+                //     });
+
+            } catch (Exception) {
+                res.status(500).send("Service Unavailable");
+            }
+        });
     }
 }

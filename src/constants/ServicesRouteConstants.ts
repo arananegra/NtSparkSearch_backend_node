@@ -8,6 +8,6 @@ export class ServicesRouteConstants {
     public static ECONOMIC_FUNDING_TYPE_SERVICE: string = "/economicfundingtype";
     public static CLINICAL_TRIAL_EXCLUSION_CRITERIA_SERVICE: string = "/clinicaltrialexclusioncriteria";
     public static CLINICAL_TRIAL_INCLUSION_CRITERIA_SERVICE: string = "/clinicaltrialinclusioncriteria";
-    public static USER_SERVICE: string = "/user";
+    public static TEST_SERVICE: string = "/test";
     public static ROL_SERVICE: string = "/rol";
 }
