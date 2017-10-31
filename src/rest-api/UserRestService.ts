@@ -28,23 +28,25 @@ export class UserRestService {
                 //
                 // userSearcher.userIdSearchCriteria = req.params.id;
 
-
                 DbConnectionBS.getConnection()
                     .then((connection) => {
-                        console.log("La conexión en el serivce es ", connection.db);
+                        //console.log("La conexión en el serivce es ", connection);
                         connectionReference = connection;
-                    });
+                    }).then(() => {
+                    let user = {
+                        a: 'abc',
+                    };
+                    connectionReference.collection("testCollection").insertOne(user);
 
-                let user = {
-                    a: 'abc',
-                };
+                });
 
-                connectionReference.collection("testCollection").insert(user);
+
+                //connectionReference.collection("testCollection").insert(user);
 
                 //console.log(connectionReference);
                 let geneDTO = new GeneDTO();
 
-                geneDTO._gene_id = "02";
+                geneDTO._gene_id = "01";
                 geneDTO._sequence = "GATCA";
 
                 res.status(200).send(JSON.stringify(geneDTO));
@@ -63,6 +65,7 @@ export class UserRestService {
                 //     });
 
             } catch (Exception) {
+                console.log("Es un exceptionnnn!!!!", Exception);
                 res.status(500).send(Exception);
             }
         });

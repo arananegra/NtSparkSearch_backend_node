@@ -10,13 +10,13 @@ export class DbConnectionBS {
 
     public static getConnection(connectionConfiguration?: MongoDBConfigurationDTO): Q.IPromise<any> {
         let deferred: Q.Deferred<any>;
-        console.log("Metodo getConnection");
+        console.log("Metodo getConnection lanzado");
 
         try {
             deferred = Q.defer<any>();
             MongoDBConnectionPoolDAO.getInstance()
                 .then((daoInstance) => {
-                    console.log("Getting the instance ", daoInstance);
+                    //console.log("Getting the instance ", daoInstance);
                     deferred.resolve(daoInstance.getConnectionPool());
                 });
 

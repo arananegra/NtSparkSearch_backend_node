@@ -1,6 +1,7 @@
 import * as mongoose from "mongoose";
 import * as Q from "q";
 import {MongoDBConfigurationDTO} from "../domain/MongoDBConfigurationDTO";
+(<any>mongoose).Promise = require('q').Promise;
 
 export class MongoDBConnectionPoolDAO {
     private static _instance: MongoDBConnectionPoolDAO = new MongoDBConnectionPoolDAO();
@@ -17,7 +18,8 @@ export class MongoDBConnectionPoolDAO {
     public static getInstance(configurationPool?: MongoDBConfigurationDTO): Q.IPromise<MongoDBConnectionPoolDAO> {
         let deferred: Q.Deferred<MongoDBConnectionPoolDAO>;
         deferred = Q.defer<MongoDBConnectionPoolDAO>();
-        (<any>mongoose).Promise = Promise;
+        //mongoose.Promise = require('q').Promise;
+
 
         try {
             if (this._instance._connectionPool == null) {
