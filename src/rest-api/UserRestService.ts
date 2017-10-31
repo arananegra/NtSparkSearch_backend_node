@@ -4,6 +4,7 @@
 // import {HttpConstants, JsonSerializationBS} from "mks-standard-infraestructure/dist";
 import {ServicesRouteConstants} from "../constants/ServicesRouteConstants";
 import {GeneDTO} from "../domain/GeneDTO";
+import {DbConnectionBS} from "../bs/DbConnectionBS";
 export class UserRestService {
     private _app: any;
 
@@ -18,6 +19,8 @@ export class UserRestService {
 
     private searchUserById() {
 
+        let connectionReference: any;
+
         this._app.get(ServicesRouteConstants.TEST_SERVICE, (req, res) => {
             try {
                 // userSearcher = new UserSearcherDTO();
@@ -25,6 +28,20 @@ export class UserRestService {
                 //
                 // userSearcher.userIdSearchCriteria = req.params.id;
 
+
+                DbConnectionBS.getConnection()
+                    .then((connection) => {
+                        console.log("La conexión en el serivce es ", connection.db);
+                        connectionReference = connection;
+                    });
+
+                let user = {
+                    a: 'abc',
+                };
+
+                connectionReference.collection("testCollection").insert(user);
+
+                //console.log(connectionReference);
                 let geneDTO = new GeneDTO();
 
                 geneDTO._gene_id = "02";
@@ -46,7 +63,7 @@ export class UserRestService {
                 //     });
 
             } catch (Exception) {
-                res.status(500).send("Service Unavailable");
+                res.status(500).send(Exception);
             }
         });
     }
