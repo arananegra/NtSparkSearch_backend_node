@@ -5,6 +5,9 @@
 import {ServicesRouteConstants} from "../constants/ServicesRouteConstants";
 import {GeneDTO} from "../domain/GeneDTO";
 import {DbConnectionBS} from "../bs/DbConnectionBS";
+import {MongoDBConfigurationDTO} from "../domain/MongoDBConfigurationDTO";
+import {Db} from "mongodb"
+import {CollectionIndexCreator} from "../dao/CollectionIndexCreator";
 export class UserRestService {
     private _app: any;
 
@@ -28,25 +31,33 @@ export class UserRestService {
                 //
                 // userSearcher.userIdSearchCriteria = req.params.id;
 
-                DbConnectionBS.getConnection()
+                let mongoDbDTO: MongoDBConfigurationDTO = new MongoDBConfigurationDTO();
+                mongoDbDTO.client_reference = "localhost";
+                mongoDbDTO.port = "27017";
+                mongoDbDTO.database_name = "testDB";
+
+                let gene_dto  = new GeneDTO();
+
+                gene_dto._geneId = "04";
+                gene_dto._sequence = "GATCAGC";
+
+                //let db: Db = null;
+
+                DbConnectionBS.getConnection(mongoDbDTO)
                     .then((connection) => {
-                        //console.log("La conexión en el serivce es ", connection);
                         connectionReference = connection;
                     }).then(() => {
-                    let user = {
-                        a: 'abc',
-                    };
-                    connectionReference.collection("testCollection").insertOne(user);
+                    //console.log("ESTA ES LA CONEXION", connectionReference);
+
+                    connectionReference.collection("testCollection").insert(gene_dto);
+                    CollectionIndexCreator.createIndex(connectionReference, "_geneId","testCollection")
 
                 });
-
-
-                //connectionReference.collection("testCollection").insert(user);
 
                 //console.log(connectionReference);
                 let geneDTO = new GeneDTO();
 
-                geneDTO._gene_id = "01";
+                geneDTO._geneId = "01";
                 geneDTO._sequence = "GATCA";
 
                 res.status(200).send(JSON.stringify(geneDTO));

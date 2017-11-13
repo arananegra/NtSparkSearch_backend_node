@@ -1,12 +1,13 @@
-import * as mongoose from "mongoose";
+import {Db} from "mongodb"
+
+let MongoClient = require('mongodb').MongoClient;
 import * as Q from "q";
 import {MongoDBConfigurationDTO} from "../domain/MongoDBConfigurationDTO";
-(<any>mongoose).Promise = require('q').Promise;
 
 export class MongoDBConnectionPoolDAO {
-    private static _instance: MongoDBConnectionPoolDAO = new MongoDBConnectionPoolDAO();
+    private static _instance: any = new MongoDBConnectionPoolDAO();
 
-    private _connectionPool: any = null;
+    private _connectionPool: Db = null;
 
     public constructor() {
         if (MongoDBConnectionPoolDAO._instance) {
@@ -15,17 +16,14 @@ export class MongoDBConnectionPoolDAO {
         MongoDBConnectionPoolDAO._instance = this;
     }
 
-    public static getInstance(configurationPool?: MongoDBConfigurationDTO): Q.IPromise<MongoDBConnectionPoolDAO> {
+    public static getInstance(configurationPool: MongoDBConfigurationDTO): Q.IPromise<MongoDBConnectionPoolDAO> {
         let deferred: Q.Deferred<MongoDBConnectionPoolDAO>;
         deferred = Q.defer<MongoDBConnectionPoolDAO>();
-        //mongoose.Promise = require('q').Promise;
-
 
         try {
             if (this._instance._connectionPool == null) {
-                this._instance._connectionPool = mongoose.createConnection("mongodb://localhost:27017/testDB", {
-                    useMongoClient: true,
-                });
+                this._instance._connectionPool = MongoClient.connect("mongodb://" + configurationPool.client_reference +
+                    ":" + configurationPool.port + "/" + configurationPool.database_name);
 
                 console.log("POOL FIRST INSTANCE");
                 deferred.resolve(MongoDBConnectionPoolDAO._instance);

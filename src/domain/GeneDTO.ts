@@ -1,10 +1,10 @@
 export class GeneDTO {
-    public _gene_id: string;
+    public _geneId: string;
     public _sequence: string;
 
 
     public constructor() {
-        this._gene_id = null;
+        this._geneId = null;
         this._sequence = null;
     }
 }
