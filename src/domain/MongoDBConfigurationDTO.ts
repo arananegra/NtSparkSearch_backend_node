@@ -1,37 +1,37 @@
 export class MongoDBConfigurationDTO {
-    private _client_reference: string;
+    private _clientReference: string;
     private _port: string;
-    private _database_name: string;
+    private _databaseName: string;
 
 
     public constructor() {
-        this._client_reference = null;
+        this._clientReference = null;
         this._port = null;
-        this._database_name = null;
+        this._databaseName = null;
     }
 
-    set client_reference(value: string) {
-        this._client_reference = value;
+    set clientReference(value: string) {
+        this._clientReference = value;
     }
 
     set port(value: string) {
         this._port = value;
     }
 
-    set database_name(value: string) {
-        this._database_name = value;
+    set databaseName(value: string) {
+        this._databaseName = value;
     }
 
 
-    get client_reference(): string {
-        return this._client_reference;
+    get clientReference(): string {
+        return this._clientReference;
     }
 
     get port(): string {
         return this._port;
     }
 
-    get database_name(): string {
-        return this._database_name;
+    get databaseName(): string {
+        return this._databaseName;
     }
 }

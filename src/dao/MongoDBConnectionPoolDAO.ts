@@ -22,8 +22,8 @@ export class MongoDBConnectionPoolDAO {
 
         try {
             if (this._instance._connectionPool == null) {
-                this._instance._connectionPool = MongoClient.connect("mongodb://" + configurationPool.client_reference +
-                    ":" + configurationPool.port + "/" + configurationPool.database_name);
+                this._instance._connectionPool = MongoClient.connect("mongodb://" + configurationPool.clientReference +
+                    ":" + configurationPool.port + "/" + configurationPool.databaseName);
 
                 console.log("POOL FIRST INSTANCE");
                 deferred.resolve(MongoDBConnectionPoolDAO._instance);

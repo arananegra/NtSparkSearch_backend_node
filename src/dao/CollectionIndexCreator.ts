@@ -1,12 +1,12 @@
-import {MongoClient, Db} from "mongodb"
+import {Collection} from "mongodb"
 
 let MongoClientInstance = require('mongodb').MongoClient;
 
 export class CollectionIndexCreator {
 
-    public static createIndex(connectionReference: Db, attributeOfMongo: string, collectioName: string) {
+    public static createIndex(collectionReference: Collection, attributeOfMongo: string) {
         try {
-            connectionReference.collection(collectioName).createIndex({[attributeOfMongo]: "text"})
+            collectionReference.createIndex({[attributeOfMongo]: "text"})
 
         } catch (Exception) {
             throw new Exception;

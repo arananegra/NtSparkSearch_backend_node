@@ -8,6 +8,10 @@ import {DbConnectionBS} from "../bs/DbConnectionBS";
 import {MongoDBConfigurationDTO} from "../domain/MongoDBConfigurationDTO";
 import {Db} from "mongodb"
 import {CollectionIndexCreator} from "../dao/CollectionIndexCreator";
+import {GeneDAO} from "../dao/GeneDAO";
+import {GeneSearcher} from "../domain/GeneSearcher";
+import {async} from "q";
+
 export class UserRestService {
     private _app: any;
 
@@ -20,11 +24,11 @@ export class UserRestService {
         this.searchUserById();
     }
 
-    private searchUserById() {
+    private async searchUserById() {
 
         let connectionReference: any;
 
-        this._app.get(ServicesRouteConstants.TEST_SERVICE, (req, res) => {
+        this._app.get(ServicesRouteConstants.TEST_SERVICE, async function (req, res) {
             try {
                 // userSearcher = new UserSearcherDTO();
                 // userBS = new UserBS();
@@ -32,27 +36,55 @@ export class UserRestService {
                 // userSearcher.userIdSearchCriteria = req.params.id;
 
                 let mongoDbDTO: MongoDBConfigurationDTO = new MongoDBConfigurationDTO();
-                mongoDbDTO.client_reference = "localhost";
+                mongoDbDTO.clientReference = "localhost";
                 mongoDbDTO.port = "27017";
-                mongoDbDTO.database_name = "testDB";
+                mongoDbDTO.databaseName = "testDB";
 
-                let gene_dto  = new GeneDTO();
+                let gene_dto = new GeneDTO();
 
-                gene_dto._geneId = "04";
+                gene_dto._geneId = "01";
                 gene_dto._sequence = "GATCAGC";
 
-                //let db: Db = null;
 
-                DbConnectionBS.getConnection(mongoDbDTO)
+                let connection = await DbConnectionBS.getConnection(mongoDbDTO);
+
+                let gene_dao = new GeneDAO("testCollection");
+                let lista_response = [];
+
+                let gene_searcher = new GeneSearcher();
+                gene_searcher.gene_id_criteria = "01";
+
+                lista_response = await gene_dao.searchGeneObjectsAndReturnAListOfObjects(connection, gene_searcher);
+
+                console.log("LA RESPUESTA FINAL", lista_response);
+
+                ////////////////////////////////////////////////////
+
+/*                DbConnectionBS.getConnection(mongoDbDTO)
                     .then((connection) => {
                         connectionReference = connection;
                     }).then(() => {
                     //console.log("ESTA ES LA CONEXION", connectionReference);
 
-                    connectionReference.collection("testCollection").insert(gene_dto);
-                    CollectionIndexCreator.createIndex(connectionReference, "_geneId","testCollection")
+                    //connectionReference.collection("testCollection").insert(gene_dto);
+                    //CollectionIndexCreator.createIndex(connectionReference.collection("testCollection"), "_geneId");
+                    let gene_searcher = new GeneSearcher();
+                    gene_searcher.gene_id_criteria = "01";
 
-                });
+                    let gene_dao = new GeneDAO("testCollection");
+
+                    let lista_response = [];
+                    gene_dao.searchGeneObjectsAndReturnAListOfObjects(connectionReference, gene_searcher).then(
+                        (response) => {
+                            console.log("REPSUESTAAA", response);
+                            lista_response = response;
+                        }
+                    );
+
+                    console.log("LA RESPUESTA FINAL", lista_response);
+
+                });*/
+
 
                 //console.log(connectionReference);
                 let geneDTO = new GeneDTO();
