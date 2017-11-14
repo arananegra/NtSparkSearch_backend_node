@@ -49,12 +49,12 @@ export class UserRestService {
                 let connection = await DbConnectionBS.getConnection(mongoDbDTO);
 
                 let gene_dao = new GeneDAO("testCollection");
-                let lista_response = [];
+                let lista_response;
 
                 let gene_searcher = new GeneSearcher();
                 gene_searcher.gene_id_criteria = "01";
 
-                lista_response = await gene_dao.searchGeneObjectsAndReturnAListOfObjects(connection, gene_searcher);
+                lista_response = await gene_dao.getAllGenesAsMap(connection);
 
                 console.log("LA RESPUESTA FINAL", lista_response);
 
@@ -74,7 +74,7 @@ export class UserRestService {
                     let gene_dao = new GeneDAO("testCollection");
 
                     let lista_response = [];
-                    gene_dao.searchGeneObjectsAndReturnAListOfObjects(connectionReference, gene_searcher).then(
+                    gene_dao.searchGenesAndReturnAListOfObjects(connectionReference, gene_searcher).then(
                         (response) => {
                             console.log("REPSUESTAAA", response);
                             lista_response = response;
