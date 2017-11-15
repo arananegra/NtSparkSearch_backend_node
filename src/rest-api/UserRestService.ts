@@ -42,7 +42,7 @@ export class UserRestService {
 
                 let gene_dto = new GeneDTO();
 
-                gene_dto._geneId = "01";
+                gene_dto._geneId = "05";
                 gene_dto._sequence = "GATCAGC";
 
 
@@ -54,9 +54,16 @@ export class UserRestService {
                 let gene_searcher = new GeneSearcher();
                 gene_searcher.gene_id_criteria = "01";
 
-                lista_response = await gene_dao.getAllGenesAsMap(connection);
+                let mapOfTest = new Map();
 
-                console.log("LA RESPUESTA FINAL", lista_response);
+                mapOfTest.set("013","GCTGACA");
+                mapOfTest.set("014", "TTTTTT");
+
+                console.log("EL MAP A INSERTAR", mapOfTest);
+
+                await gene_dao.insertGeneDocumentFromNonObjectDict(connection, mapOfTest);
+
+                //console.log("LA RESPUESTA FINAL", lista_response);
 
                 ////////////////////////////////////////////////////
 

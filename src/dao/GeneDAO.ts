@@ -102,5 +102,41 @@ export class GeneDAO {
         }
     }
 
+    public insertGeneObject(connectionReference: Db, geneToInsert: GeneDTO) {
+        try {
+            connectionReference.collection(this._collectionNameToConnect).insertOne(geneToInsert);
 
+        } catch (Exception) {
+            throw Exception;
+        }
+    }
+
+    public insertGenesFromListOfObjects(connectionReference: Db, genesToInsert: Array<GeneDTO>) {
+        try {
+            genesToInsert.map((geneToInsert) => {
+                this.insertGeneObject(connectionReference, geneToInsert);
+            });
+
+        } catch (Exception) {
+            throw Exception;
+        }
+    }
+
+    public insertGeneDocumentFromNonObjectDict(connectionReference: Db, genesMapToInsert: Map<string, string>) {
+        try {
+            let list = genesMapToInsert.entries();
+
+
+            for (let [key, value] of genesMapToInsert) {
+                let geneDTO = new GeneDTO();
+                geneDTO._geneId = key;
+                geneDTO._sequence = value;
+
+                this.insertGeneObject(connectionReference, geneDTO);
+            }
+
+        } catch (Exception) {
+            throw Exception;
+        }
+    }
 }
