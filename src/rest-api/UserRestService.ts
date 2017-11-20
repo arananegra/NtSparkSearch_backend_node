@@ -10,7 +10,6 @@ import {Db} from "mongodb"
 import {CollectionIndexCreator} from "../dao/CollectionIndexCreator";
 import {GeneDAO} from "../dao/GeneDAO";
 import {GeneSearcher} from "../domain/GeneSearcher";
-import {async} from "q";
 
 export class UserRestService {
     private _app: any;
@@ -61,7 +60,9 @@ export class UserRestService {
 
                 console.log("EL MAP A INSERTAR", mapOfTest);
 
-                await gene_dao.insertGeneDocumentFromNonObjectDict(connection, mapOfTest);
+                //await gene_dao.insertGeneDocumentFromNonObjectDict(connection, mapOfTest);
+
+                await gene_dao.getListOfGenesFromXlrd("/Users/alvarogomez/testing_files/DEG_test.xlsx", 1);
 
                 //console.log("LA RESPUESTA FINAL", lista_response);
 
@@ -115,7 +116,7 @@ export class UserRestService {
                 //     });
 
             } catch (Exception) {
-                console.log("Es un exceptionnnn!!!!", Exception);
+                console.log("Es un exceptionnnn del servicioo!!!!", Exception);
                 res.status(500).send(Exception);
             }
         });

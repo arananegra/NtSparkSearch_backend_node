@@ -4,6 +4,7 @@ import {GeneDTO} from "../domain/GeneDTO";
 import {CollectionIndexCreator} from "./CollectionIndexCreator";
 import {DatabaseConstants} from "../constants/DatabaseConstants";
 import * as Q from "q";
+import * as Excel from 'exceljs/dist/es5/exceljs.browser';
 
 export class GeneDAO {
 
@@ -102,6 +103,25 @@ export class GeneDAO {
         }
     }
 
+    public getListOfGenesFromXlrd(filePath: string, sheetNumber: number, columnName?: string) {
+        let listOfGeneDTOs: Array<GeneDTO>;
+        listOfGeneDTOs = new Array<GeneDTO>();
+
+        try {
+            let workbook: Excel.Workbook = new Excel.Workbook();
+
+            workbook.xlsx.readFile(filePath).then(() => {
+                let inboundWorksheet = workbook.getWorksheet(sheetNumber);
+                inboundWorksheet.eachRow({includeEmpty: false}, (row, rowNumber) => {
+                    console.log("Row " + rowNumber + " = " + JSON.stringify(row.values));
+                });
+            });
+
+        } catch (Exception) {
+            throw Exception;
+        }
+    }
+
     public insertGeneObject(connectionReference: Db, geneToInsert: GeneDTO) {
         try {
             connectionReference.collection(this._collectionNameToConnect).insertOne(geneToInsert);
@@ -125,8 +145,6 @@ export class GeneDAO {
     public insertGeneDocumentFromNonObjectDict(connectionReference: Db, genesMapToInsert: Map<string, string>) {
         try {
             let list = genesMapToInsert.entries();
-
-
             for (let [key, value] of genesMapToInsert) {
                 let geneDTO = new GeneDTO();
                 geneDTO._geneId = key;
