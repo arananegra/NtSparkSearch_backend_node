@@ -5,6 +5,7 @@ import {CollectionIndexCreator} from "./CollectionIndexCreator";
 import {DatabaseConstants} from "../constants/DatabaseConstants";
 import * as Q from "q";
 import * as XLSX from "xlsx";
+import * as _ from "lodash";
 
 export class GeneDAO {
 
@@ -113,14 +114,16 @@ export class GeneDAO {
             let workbook = XLSX.readFile(filePath);
 
             let worksheet = workbook.Sheets[workbook.SheetNames[sheetNumber - 1]];
-            console.log(XLSX.utils.sheet_to_json(worksheet, {raw: false}));
 
             XLSX.utils.sheet_to_json(worksheet, {raw: false}).map((singleExcelRow) => {
                 let singleGeneDTO = new GeneDTO();
                 singleGeneDTO._geneId = singleExcelRow["gene_id"];
                 listOfGeneDTOs.push(singleGeneDTO)
             });
-            return listOfGeneDTOs;
+
+            let listOfGeneDTOsNoRepeated = _.uniqBy(listOfGeneDTOs, DatabaseConstants.GENE_ID_FIELD_NAME);
+
+            return listOfGeneDTOsNoRepeated;
         } catch (Exception) {
             throw Exception;
         }
