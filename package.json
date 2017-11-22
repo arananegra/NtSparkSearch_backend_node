@@ -20,7 +20,7 @@
     "axios": "^0.16.2",
     "body-parser": "^1.17.2",
     "core-js": "^2.4.1",
-    "exceljs": "^0.6.2",
+    "xlsx": "^0.11.10",
     "express": "^4.15.3",
     "istanbul-instrumenter-loader": "^3.0.0",
     "json-object-mapper": "^1.5.1",

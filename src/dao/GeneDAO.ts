@@ -4,7 +4,7 @@ import {GeneDTO} from "../domain/GeneDTO";
 import {CollectionIndexCreator} from "./CollectionIndexCreator";
 import {DatabaseConstants} from "../constants/DatabaseConstants";
 import * as Q from "q";
-import * as Excel from 'exceljs/dist/es5/exceljs.browser';
+import * as XLSX from "xlsx";
 
 export class GeneDAO {
 
@@ -103,28 +103,24 @@ export class GeneDAO {
         }
     }
 
-    public getDataFromExcelWithGeneIds(filePath: string, sheetNumber: number, columnName?: string): Q.IPromise<Array<Array<string>>> {
-        let deferred: Q.Deferred<Array<Array<string>>>;
-        deferred = Q.defer<Array<Array<string>>>();
+    public getListOfGenesFromXlrd(filePath: string, sheetNumber: number): Array<GeneDTO> {
+        let deferred: Q.Deferred<Array<GeneDTO>>;
+        deferred = Q.defer<Array<GeneDTO>>();
 
+        let listOfGeneDTOs: Array<GeneDTO>;
+        listOfGeneDTOs = new Array<GeneDTO>();
         try {
-            let workbook: Excel.Workbook = new Excel.Workbook();
-            let arrayOfArraysWithData: Array<Array<string>> = [];
+            let workbook = XLSX.readFile(filePath);
 
-            workbook.xlsx.readFile(filePath).then(() => {
-                let inboundWorksheet = workbook.getWorksheet(sheetNumber);
-                inboundWorksheet.eachRow({includeEmpty: false}, (row) => {
-                    let innerArrayOfInfo: Array<string> = [];
-                    row.values.map((item) => {
-                        innerArrayOfInfo.push(item);
-                    });
-                    arrayOfArraysWithData.push(innerArrayOfInfo)
-                });
-                deferred.resolve(arrayOfArraysWithData);
+            let worksheet = workbook.Sheets[workbook.SheetNames[sheetNumber - 1]];
+            console.log(XLSX.utils.sheet_to_json(worksheet, {raw: false}));
+
+            XLSX.utils.sheet_to_json(worksheet, {raw: false}).map((singleExcelRow) => {
+                let singleGeneDTO = new GeneDTO();
+                singleGeneDTO._geneId = singleExcelRow["gene_id"];
+                listOfGeneDTOs.push(singleGeneDTO)
             });
-
-            return deferred.promise
-
+            return listOfGeneDTOs;
         } catch (Exception) {
             throw Exception;
         }

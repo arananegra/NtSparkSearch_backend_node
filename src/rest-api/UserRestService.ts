@@ -58,11 +58,11 @@ export class UserRestService {
                 mapOfTest.set("013","GCTGACA");
                 mapOfTest.set("014", "TTTTTT");
 
-                console.log("EL MAP A INSERTAR", mapOfTest);
+                // console.log("EL MAP A INSERTAR", mapOfTest);
 
                 //await gene_dao.insertGeneDocumentFromNonObjectDict(connection, mapOfTest);
 
-                let thing = await gene_dao.getDataFromExcelWithGeneIds("/Users/alvarogomez/testing_files/DEG_test_2.xlsx", 1);
+                let thing = await gene_dao.getListOfGenesFromXlrd("/Users/alvarogomez/testing_files/DEG_test_2.xlsx", 1);
                 console.log("LO QUE OBTENGO DEL ARRAY,", thing);
 
                 //console.log("LA RESPUESTA FINAL", lista_response);
