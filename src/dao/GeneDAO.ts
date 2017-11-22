@@ -103,19 +103,27 @@ export class GeneDAO {
         }
     }
 
-    public getListOfGenesFromXlrd(filePath: string, sheetNumber: number, columnName?: string) {
-        let listOfGeneDTOs: Array<GeneDTO>;
-        listOfGeneDTOs = new Array<GeneDTO>();
+    public getDataFromExcelWithGeneIds(filePath: string, sheetNumber: number, columnName?: string): Q.IPromise<Array<Array<string>>> {
+        let deferred: Q.Deferred<Array<Array<string>>>;
+        deferred = Q.defer<Array<Array<string>>>();
 
         try {
             let workbook: Excel.Workbook = new Excel.Workbook();
+            let arrayOfArraysWithData: Array<Array<string>> = [];
 
             workbook.xlsx.readFile(filePath).then(() => {
                 let inboundWorksheet = workbook.getWorksheet(sheetNumber);
-                inboundWorksheet.eachRow({includeEmpty: false}, (row, rowNumber) => {
-                    console.log("Row " + rowNumber + " = " + JSON.stringify(row.values));
+                inboundWorksheet.eachRow({includeEmpty: false}, (row) => {
+                    let innerArrayOfInfo: Array<string> = [];
+                    row.values.map((item) => {
+                        innerArrayOfInfo.push(item);
+                    });
+                    arrayOfArraysWithData.push(innerArrayOfInfo)
                 });
+                deferred.resolve(arrayOfArraysWithData);
             });
+
+            return deferred.promise
 
         } catch (Exception) {
             throw Exception;
