@@ -6,6 +6,9 @@ import {DatabaseConstants} from "../constants/DatabaseConstants";
 import * as Q from "q";
 import * as XLSX from "xlsx";
 import * as _ from "lodash";
+import * as bionodeFasta from "bionode-fasta";
+
+let fasta = require("bionode-fasta");
 
 export class GeneDAO {
 
@@ -121,12 +124,33 @@ export class GeneDAO {
                 listOfGeneDTOs.push(singleGeneDTO)
             });
 
-            let listOfGeneDTOsNoRepeated = _.uniqBy(listOfGeneDTOs, DatabaseConstants.GENE_ID_FIELD_NAME);
-
-            return listOfGeneDTOsNoRepeated;
+            return _.uniqBy(listOfGeneDTOs, DatabaseConstants.GENE_ID_FIELD_NAME);
         } catch (Exception) {
             throw Exception;
         }
+    }
+
+    public getListOfGenesFromFasta(filePath: string): Q.IPromise<Array<GeneDTO>> {
+
+        let deferred: Q.Deferred<Array<GeneDTO>>;
+        deferred = Q.defer<Array<GeneDTO>>();
+        let geneDtoList: Array<GeneDTO> = [];
+        try {
+
+            fasta({objectMode: true}, filePath)
+                .on('data', (singleRowFromFasta) => {
+                    let singleGeneDto: GeneDTO = new GeneDTO();
+                    singleGeneDto._geneId = singleRowFromFasta.id;
+                    singleGeneDto._sequence = singleRowFromFasta.seq;
+                    geneDtoList.push(singleGeneDto);
+                    deferred.resolve(geneDtoList);
+                });
+
+            return deferred.promise;
+        } catch (Exception) {
+            throw Exception;
+        }
+
     }
 
     public insertGeneObject(connectionReference: Db, geneToInsert: GeneDTO) {

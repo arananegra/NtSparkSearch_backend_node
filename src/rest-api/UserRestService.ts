@@ -62,8 +62,8 @@ export class UserRestService {
 
                 //await gene_dao.insertGeneDocumentFromNonObjectDict(connection, mapOfTest);
 
-                let thing = await gene_dao.getListOfGenesFromXlrd("/Users/alvarogomez/testing_files/DEG_test.xlsx", 1);
-                console.log("LO QUE OBTENGO DEL ARRAY,", thing);
+                let thing = await gene_dao.getListOfGenesFromFasta("/Users/alvarogomez/testing_files/test.fasta");
+                console.log("LO QUE OBTENGO DEL fasta,", thing);
 
                 //console.log("LA RESPUESTA FINAL", lista_response);
 
