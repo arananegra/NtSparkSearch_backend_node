@@ -7,8 +7,7 @@ import * as Q from "q";
 import * as XLSX from "xlsx";
 import * as _ from "lodash";
 import * as bionodeFasta from "bionode-fasta";
-
-let fasta = require("bionode-fasta");
+import * as fasta from "bionode-fasta"
 
 export class GeneDAO {
 
