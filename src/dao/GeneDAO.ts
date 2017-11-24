@@ -6,7 +6,6 @@ import {DatabaseConstants} from "../constants/DatabaseConstants";
 import * as Q from "q";
 import * as XLSX from "xlsx";
 import * as _ from "lodash";
-import * as bionodeFasta from "bionode-fasta";
 import * as fasta from "bionode-fasta"
 
 export class GeneDAO {
@@ -18,7 +17,6 @@ export class GeneDAO {
     }
 
     public searchGenesAndReturnAListOfObjects(connectionReference: Db, geneSearcher: GeneSearcher): Q.IPromise<Array<GeneDTO>> {
-
         let deferred: Q.Deferred<Array<GeneDTO>>;
         deferred = Q.defer<Array<GeneDTO>>();
         let collectionFromConnectionReference: Collection = null;
@@ -130,7 +128,6 @@ export class GeneDAO {
     }
 
     public getListOfGenesFromFasta(filePath: string): Q.IPromise<Array<GeneDTO>> {
-
         let deferred: Q.Deferred<Array<GeneDTO>>;
         deferred = Q.defer<Array<GeneDTO>>();
         let geneDtoList: Array<GeneDTO> = [];

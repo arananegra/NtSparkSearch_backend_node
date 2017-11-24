@@ -17,7 +17,8 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/arananegrayeye/ntsparksearch_backend_node#readme",
   "dependencies": {
-    "axios": "^0.16.2",
+    "axios": "^0.17.1",
+    "xml2js": "^0.4.19",
     "body-parser": "^1.17.2",
     "core-js": "^2.4.1",
     "bionode-fasta": "^0.5.6",
