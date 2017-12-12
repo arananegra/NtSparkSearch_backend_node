@@ -7,6 +7,8 @@ import * as Q from "q";
 import * as XLSX from "xlsx";
 import * as _ from "lodash";
 import * as fasta from "bionode-fasta"
+import Axios, {AxiosPromise} from "axios";
+import {parseString} from "xml2js"
 
 export class GeneDAO {
 
@@ -105,9 +107,6 @@ export class GeneDAO {
     }
 
     public getListOfGenesFromXlrd(filePath: string, sheetNumber: number): Array<GeneDTO> {
-        let deferred: Q.Deferred<Array<GeneDTO>>;
-        deferred = Q.defer<Array<GeneDTO>>();
-
         let listOfGeneDTOs: Array<GeneDTO>;
         listOfGeneDTOs = new Array<GeneDTO>();
         try {
@@ -183,5 +182,53 @@ export class GeneDAO {
         } catch (Exception) {
             throw Exception;
         }
+    }
+
+    public downloadGenesFromListOfGeneObjects(listOfGenes: Array<GeneDTO>) {
+        let deferred: Q.Deferred<Array<GeneDTO>>;
+        deferred = Q.defer<Array<GeneDTO>>();
+        let fulFilledGeneObjects: Array<GeneDTO> = [];
+
+        try {
+
+            for (let singleGene of listOfGenes) {
+                this.getMetaInfoAboutGene(singleGene._geneId).then((metaInfoAboutGene) => {
+                    parseString(metaInfoAboutGene, function (err, result) {
+                        let geneRegion = result['Entrezgene-Set']["Entrezgene"][0]["Entrezgene_locus"][0]["Gene-commentary"][0]
+                            ["Gene-commentary_seqs"][0]["Seq-loc"][0]['Seq-loc_int'][0]['Seq-interval'];
+                        let startPos = Number(geneRegion[0]["Seq-interval_from"][0]) + 1;
+                        let endPost = Number(geneRegion[0]["Seq-interval_to"][0]) + 1;
+
+                        let intervalId = geneRegion[0]["Seq-interval_id"][0]["Seq-id"][0]["Seq-id_gi"][0];
+
+                        let strandSense = geneRegion[0]["Seq-interval_strand"][0]["Na-strand"][0]["$"]["value"];
+                        strandSense === "minus" ? strandSense = 2 : strandSense = 1;
+
+                        this.getFastaFromGene(intervalId, startPos, endPost, strandSense).then(fastaResponse => {
+                            let fastaResponseWithoutHeader = fastaResponse.substring(fastaResponse.indexOf("\n") + 1);
+                            let fastaSingleLine = fastaResponseWithoutHeader.replace(/[\n]/g, "");
+
+                            let singleFulFilledGene = new GeneDTO();
+                            singleFulFilledGene._geneId = singleGene._geneId;
+                            singleFulFilledGene._sequence = fastaSingleLine;
+                        })
+                    });
+
+                }).catch((Exception) => {
+
+                })
+            }
+        } catch (Exception) {
+            throw Exception;
+        }
+    }
+
+    private getMetaInfoAboutGene(geneId: string): AxiosPromise<string> {
+        return Axios.get('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=gene&id=' + geneId + '&retmode=xml')
+    }
+
+    private getFastaFromGene(intervalId: string, startPos: string, endPost: string, strandSense: string): AxiosPromise<string> {
+        return Axios.get('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&retmode=text' +
+            '&rettype=fasta&id=' + intervalId + "&seq_start=" + startPos + "&seq_stop=" + endPost + "&strand=" + strandSense)
     }
 }
