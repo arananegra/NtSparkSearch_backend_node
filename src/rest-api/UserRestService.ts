@@ -41,8 +41,8 @@ export class UserRestService {
 
                 let gene_dto = new GeneDTO();
 
-                gene_dto._geneId = "05";
-                gene_dto._sequence = "GATCAGC";
+                gene_dto._geneId = "13";
+                //gene_dto._sequence = "GATCAGC";
 
 
                 let connection = await DbConnectionBS.getConnection(mongoDbDTO);
@@ -62,10 +62,13 @@ export class UserRestService {
 
                 //await gene_dao.insertGeneDocumentFromNonObjectDict(connection, mapOfTest);
 
-                let thing = await gene_dao.getListOfGenesFromFasta("/Users/alvarogomez/testing_files/test.fasta");
-                console.log("LO QUE OBTENGO DEL fasta,", thing);
+                //let thing = await gene_dao.getListOfGenesFromFasta("/Users/alvarogomez/testing_files/test.fasta");
+                //console.log("LO QUE OBTENGO DEL fasta,", thing);
 
                 //console.log("LA RESPUESTA FINAL", lista_response);
+
+                let ncbiTest = await gene_dao.downloadGeneFromNcbi(gene_dto);
+                console.log(ncbiTest);
 
                 ////////////////////////////////////////////////////
 

@@ -184,40 +184,44 @@ export class GeneDAO {
         }
     }
 
-    public downloadGenesFromListOfGeneObjects(listOfGenes: Array<GeneDTO>) {
-        let deferred: Q.Deferred<Array<GeneDTO>>;
-        deferred = Q.defer<Array<GeneDTO>>();
-        let fulFilledGeneObjects: Array<GeneDTO> = [];
+    public downloadGeneFromNcbi(singleGene: GeneDTO): Q.IPromise<GeneDTO> {
+        let deferred: Q.Deferred<GeneDTO>;
+        deferred = Q.defer<GeneDTO>();
+        let fulFilledGeneObject = null;
 
         try {
+            this.getMetaInfoAboutGene(singleGene._geneId).then((metaInfoAboutGene) => {
+                parseString(metaInfoAboutGene, function (err, result) {
+                    console.log("El resultadoooooooo " ,result);
+                    let geneRegion = result['Entrezgene-Set']["Entrezgene"][0]["Entrezgene_locus"][0]["Gene-commentary"][0]
+                        ["Gene-commentary_seqs"][0]["Seq-loc"][0]['Seq-loc_int'][0]['Seq-interval'];
+                    let startPos = Number(geneRegion[0]["Seq-interval_from"][0]) + 1;
+                    let endPost = Number(geneRegion[0]["Seq-interval_to"][0]) + 1;
 
-            for (let singleGene of listOfGenes) {
-                this.getMetaInfoAboutGene(singleGene._geneId).then((metaInfoAboutGene) => {
-                    parseString(metaInfoAboutGene, function (err, result) {
-                        let geneRegion = result['Entrezgene-Set']["Entrezgene"][0]["Entrezgene_locus"][0]["Gene-commentary"][0]
-                            ["Gene-commentary_seqs"][0]["Seq-loc"][0]['Seq-loc_int'][0]['Seq-interval'];
-                        let startPos = Number(geneRegion[0]["Seq-interval_from"][0]) + 1;
-                        let endPost = Number(geneRegion[0]["Seq-interval_to"][0]) + 1;
+                    let intervalId = geneRegion[0]["Seq-interval_id"][0]["Seq-id"][0]["Seq-id_gi"][0];
 
-                        let intervalId = geneRegion[0]["Seq-interval_id"][0]["Seq-id"][0]["Seq-id_gi"][0];
+                    let strandSense = geneRegion[0]["Seq-interval_strand"][0]["Na-strand"][0]["$"]["value"];
+                    strandSense === "minus" ? strandSense = 2 : strandSense = 1;
 
-                        let strandSense = geneRegion[0]["Seq-interval_strand"][0]["Na-strand"][0]["$"]["value"];
-                        strandSense === "minus" ? strandSense = 2 : strandSense = 1;
+                    this.getFastaFromGene(intervalId, startPos, endPost, strandSense).then(fastaResponse => {
+                        let fastaResponseWithoutHeader = fastaResponse.substring(fastaResponse.indexOf("\n") + 1);
+                        let fastaSingleLine = fastaResponseWithoutHeader.replace(/[\n]/g, "");
 
-                        this.getFastaFromGene(intervalId, startPos, endPost, strandSense).then(fastaResponse => {
-                            let fastaResponseWithoutHeader = fastaResponse.substring(fastaResponse.indexOf("\n") + 1);
-                            let fastaSingleLine = fastaResponseWithoutHeader.replace(/[\n]/g, "");
-
-                            let singleFulFilledGene = new GeneDTO();
-                            singleFulFilledGene._geneId = singleGene._geneId;
-                            singleFulFilledGene._sequence = fastaSingleLine;
-                        })
+                        let singleFulFilledGene = new GeneDTO();
+                        singleFulFilledGene._geneId = singleGene._geneId;
+                        singleFulFilledGene._sequence = fastaSingleLine;
+                        fulFilledGeneObject = singleFulFilledGene;
+                        deferred.resolve(fulFilledGeneObject);
+                    }).catch((Exception) => {
+                        throw Exception;
                     });
+                });
 
-                }).catch((Exception) => {
+            }).catch((Exception) => {
+                throw Exception;
+            });
 
-                })
-            }
+            return deferred.promise;
         } catch (Exception) {
             throw Exception;
         }
