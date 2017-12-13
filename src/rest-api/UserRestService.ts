@@ -41,7 +41,7 @@ export class UserRestService {
 
                 let gene_dto = new GeneDTO();
 
-                gene_dto._geneId = "1021";
+                gene_dto._geneId = "0";
                 //gene_dto._sequence = "GATCAGC";
 
 
@@ -70,6 +70,8 @@ export class UserRestService {
                 let ncbiTest = gene_dao.downloadGeneFromNcbi(gene_dto).then((theGeneDTO) => {
                     gene_dao.insertGeneObject(connection, theGeneDTO);
                     console.log("insertaddooooooo");
+                }).catch(Exception => {
+                    console.log(Exception);
                 });
                 console.log("El servicio no se queda pillado");
                 //console.log(ncbiTest);

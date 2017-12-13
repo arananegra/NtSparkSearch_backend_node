@@ -9,6 +9,7 @@ import * as _ from "lodash";
 import * as fasta from "bionode-fasta"
 import Axios, {AxiosPromise} from "axios";
 import {parseString} from "xml2js"
+import {async} from "q";
 
 export class GeneDAO {
 
@@ -184,42 +185,34 @@ export class GeneDAO {
         }
     }
 
-    public downloadGeneFromNcbi(singleGene: GeneDTO): Q.IPromise<GeneDTO> {
+    public async downloadGeneFromNcbi(singleGene: GeneDTO): Promise<GeneDTO> {
         let deferred: Q.Deferred<GeneDTO>;
         deferred = Q.defer<GeneDTO>();
         let fulFilledGeneObject = null;
 
         try {
-            this.getMetaInfoAboutGene(singleGene._geneId).then((metaInfoAboutGene) => {
-                parseString(metaInfoAboutGene, (err, result) => {
-                    let geneRegion = result['Entrezgene-Set']["Entrezgene"][0]["Entrezgene_locus"][0]["Gene-commentary"][0]
-                        ["Gene-commentary_seqs"][0]["Seq-loc"][0]['Seq-loc_int'][0]['Seq-interval'];
-                    let startPos = Number(geneRegion[0]["Seq-interval_from"][0]) + 1;
-                    let endPost = Number(geneRegion[0]["Seq-interval_to"][0]) + 1;
+            let metaInfoAboutGene = await this.getMetaInfoAboutGene(singleGene._geneId);
+            parseString(metaInfoAboutGene, async (err, result) => {
+                let geneRegion = result['Entrezgene-Set']["Entrezgene"][0]["Entrezgene_locus"][0]["Gene-commentary"][0]
+                    ["Gene-commentary_seqs"][0]["Seq-loc"][0]['Seq-loc_int'][0]['Seq-interval'];
+                let startPos = Number(geneRegion[0]["Seq-interval_from"][0]) + 1;
+                let endPost = Number(geneRegion[0]["Seq-interval_to"][0]) + 1;
 
-                    let intervalId = geneRegion[0]["Seq-interval_id"][0]["Seq-id"][0]["Seq-id_gi"][0];
+                let intervalId = geneRegion[0]["Seq-interval_id"][0]["Seq-id"][0]["Seq-id_gi"][0];
 
-                    let strandSense = geneRegion[0]["Seq-interval_strand"][0]["Na-strand"][0]["$"]["value"];
-                    strandSense === "minus" ? strandSense = 2 : strandSense = 1;
+                let strandSense = geneRegion[0]["Seq-interval_strand"][0]["Na-strand"][0]["$"]["value"];
+                strandSense === "minus" ? strandSense = 2 : strandSense = 1;
 
-                    this.getFastaFromGene(intervalId, startPos, endPost, strandSense).then(fastaResponse => {
-                        let fastaResponseWithoutHeader = fastaResponse.substring(fastaResponse.indexOf("\n") + 1);
-                        let fastaSingleLine = fastaResponseWithoutHeader.replace(/[\n]/g, "");
+                let fastaResponse = await this.getFastaFromGene(intervalId, startPos, endPost, strandSense);
+                let fastaResponseWithoutHeader = fastaResponse.substring(fastaResponse.indexOf("\n") + 1);
+                let fastaSingleLine = fastaResponseWithoutHeader.replace(/[\n]/g, "");
 
-                        let singleFulFilledGene = new GeneDTO();
-                        singleFulFilledGene._geneId = singleGene._geneId;
-                        singleFulFilledGene._sequence = fastaSingleLine;
-                        fulFilledGeneObject = singleFulFilledGene;
-                        deferred.resolve(fulFilledGeneObject);
-                    }).catch((Exception) => {
-                        throw Exception;
-                    });
-                });
-
-            }).catch((Exception) => {
-                throw Exception;
+                let singleFulFilledGene = new GeneDTO();
+                singleFulFilledGene._geneId = singleGene._geneId;
+                singleFulFilledGene._sequence = fastaSingleLine;
+                fulFilledGeneObject = singleFulFilledGene;
+                deferred.resolve(fulFilledGeneObject);
             });
-
             return deferred.promise;
         } catch (Exception) {
             throw Exception;
