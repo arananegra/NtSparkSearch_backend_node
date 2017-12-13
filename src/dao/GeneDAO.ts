@@ -191,8 +191,7 @@ export class GeneDAO {
 
         try {
             this.getMetaInfoAboutGene(singleGene._geneId).then((metaInfoAboutGene) => {
-                parseString(metaInfoAboutGene, function (err, result) {
-                    console.log("El resultadoooooooo " ,result);
+                parseString(metaInfoAboutGene, (err, result) => {
                     let geneRegion = result['Entrezgene-Set']["Entrezgene"][0]["Entrezgene_locus"][0]["Gene-commentary"][0]
                         ["Gene-commentary_seqs"][0]["Seq-loc"][0]['Seq-loc_int'][0]['Seq-interval'];
                     let startPos = Number(geneRegion[0]["Seq-interval_from"][0]) + 1;
@@ -227,12 +226,24 @@ export class GeneDAO {
         }
     }
 
-    private getMetaInfoAboutGene(geneId: string): AxiosPromise<string> {
-        return Axios.get('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=gene&id=' + geneId + '&retmode=xml')
+    private getMetaInfoAboutGene(geneId: string): Promise<string> {
+        return Axios.get('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=gene&id='
+            + geneId + '&retmode=xml')
+            .then(response => {
+                return response.data;
+            }).catch(Exception => {
+                throw Exception;
+            });
     }
 
-    private getFastaFromGene(intervalId: string, startPos: string, endPost: string, strandSense: string): AxiosPromise<string> {
+    private getFastaFromGene(intervalId: string, startPos: number, endPost: number, strandSense: string): Promise<string> {
         return Axios.get('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&retmode=text' +
-            '&rettype=fasta&id=' + intervalId + "&seq_start=" + startPos + "&seq_stop=" + endPost + "&strand=" + strandSense)
+            '&rettype=fasta&id=' + intervalId + "&seq_start=" + String(startPos) +
+            "&seq_stop=" + String(endPost) + "&strand=" + strandSense)
+            .then(response => {
+                return response.data;
+            }).catch(Exception => {
+                throw Exception;
+            });
     }
 }

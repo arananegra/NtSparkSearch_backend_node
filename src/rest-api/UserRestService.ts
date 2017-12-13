@@ -41,7 +41,7 @@ export class UserRestService {
 
                 let gene_dto = new GeneDTO();
 
-                gene_dto._geneId = "13";
+                gene_dto._geneId = "1021";
                 //gene_dto._sequence = "GATCAGC";
 
 
@@ -55,7 +55,7 @@ export class UserRestService {
 
                 let mapOfTest = new Map();
 
-                mapOfTest.set("013","GCTGACA");
+                mapOfTest.set("013", "GCTGACA");
                 mapOfTest.set("014", "TTTTTT");
 
                 // console.log("EL MAP A INSERTAR", mapOfTest);
@@ -67,35 +67,39 @@ export class UserRestService {
 
                 //console.log("LA RESPUESTA FINAL", lista_response);
 
-                let ncbiTest = await gene_dao.downloadGeneFromNcbi(gene_dto);
-                console.log(ncbiTest);
+                let ncbiTest = gene_dao.downloadGeneFromNcbi(gene_dto).then((theGeneDTO) => {
+                    gene_dao.insertGeneObject(connection, theGeneDTO);
+                    console.log("insertaddooooooo");
+                });
+                console.log("El servicio no se queda pillado");
+                //console.log(ncbiTest);
 
                 ////////////////////////////////////////////////////
 
-/*                DbConnectionBS.getConnection(mongoDbDTO)
-                    .then((connection) => {
-                        connectionReference = connection;
-                    }).then(() => {
-                    //console.log("ESTA ES LA CONEXION", connectionReference);
+                /*                DbConnectionBS.getConnection(mongoDbDTO)
+                                    .then((connection) => {
+                                        connectionReference = connection;
+                                    }).then(() => {
+                                    //console.log("ESTA ES LA CONEXION", connectionReference);
 
-                    //connectionReference.collection("testCollection").insert(gene_dto);
-                    //CollectionIndexCreator.createIndex(connectionReference.collection("testCollection"), "_geneId");
-                    let gene_searcher = new GeneSearcher();
-                    gene_searcher.gene_id_criteria = "01";
+                                    //connectionReference.collection("testCollection").insert(gene_dto);
+                                    //CollectionIndexCreator.createIndex(connectionReference.collection("testCollection"), "_geneId");
+                                    let gene_searcher = new GeneSearcher();
+                                    gene_searcher.gene_id_criteria = "01";
 
-                    let gene_dao = new GeneDAO("testCollection");
+                                    let gene_dao = new GeneDAO("testCollection");
 
-                    let lista_response = [];
-                    gene_dao.searchGenesAndReturnAListOfObjects(connectionReference, gene_searcher).then(
-                        (response) => {
-                            console.log("REPSUESTAAA", response);
-                            lista_response = response;
-                        }
-                    );
+                                    let lista_response = [];
+                                    gene_dao.searchGenesAndReturnAListOfObjects(connectionReference, gene_searcher).then(
+                                        (response) => {
+                                            console.log("REPSUESTAAA", response);
+                                            lista_response = response;
+                                        }
+                                    );
 
-                    console.log("LA RESPUESTA FINAL", lista_response);
+                                    console.log("LA RESPUESTA FINAL", lista_response);
 
-                });*/
+                                });*/
 
 
                 //console.log(connectionReference);
