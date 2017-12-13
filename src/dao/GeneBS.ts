@@ -2,6 +2,7 @@ import {GeneDTO} from "../domain/GeneDTO";
 import * as Q from "q";
 import Axios from 'axios';
 import {GeneDAO} from "./GeneDAO";
+import {MessageConstants} from "../constants/MessageConstants";
 
 export class GeneBS {
     private _collectionNameToConnect: string;
@@ -27,6 +28,9 @@ export class GeneBS {
                     listDownloadedGenes.push(downloadedGene);
 
                 } catch (Exception) {
+                    singleGen._sequence = null;
+                    listDownloadedGenes.push(singleGen);
+                    console.error(MessageConstants.DOWNLOAD_ERROR_MESSAGE);
                     continue;
                 }
             }

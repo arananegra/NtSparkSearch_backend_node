@@ -84,12 +84,16 @@ export class UserRestService {
                 let gene_dto_2 = new GeneDTO();
                 gene_dto_2._geneId = "20";
 
+                let gene_dto_2_5 = new GeneDTO();
+                gene_dto_2_5._geneId = "0";
+
                 let gene_dto_3 = new GeneDTO();
                 gene_dto_3._geneId = "19";
 
                 let gene_list = new Array<GeneDTO>();
                 gene_list.push(gene_dto_1);
                 gene_list.push(gene_dto_2);
+                gene_list.push(gene_dto_2_5);
                 gene_list.push(gene_dto_3);
 
                 let ncbiTest = gene_bs.downloadGeneObjectsFromListOfIdsThroughNcbi(gene_list).then((list_downloaded) => {
