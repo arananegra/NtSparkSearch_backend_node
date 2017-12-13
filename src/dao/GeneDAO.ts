@@ -9,7 +9,6 @@ import * as _ from "lodash";
 import * as fasta from "bionode-fasta"
 import Axios, {AxiosPromise} from "axios";
 import {parseString} from "xml2js"
-import {async} from "q";
 
 export class GeneDAO {
 
@@ -146,7 +145,6 @@ export class GeneDAO {
         } catch (Exception) {
             throw Exception;
         }
-
     }
 
     public insertGeneObject(connectionReference: Db, geneToInsert: GeneDTO) {

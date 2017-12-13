@@ -10,6 +10,7 @@ import {Db} from "mongodb"
 import {CollectionIndexCreator} from "../dao/CollectionIndexCreator";
 import {GeneDAO} from "../dao/GeneDAO";
 import {GeneSearcher} from "../domain/GeneSearcher";
+import {GeneBS} from "../dao/GeneBS";
 
 export class UserRestService {
     private _app: any;
@@ -48,6 +49,7 @@ export class UserRestService {
                 let connection = await DbConnectionBS.getConnection(mongoDbDTO);
 
                 let gene_dao = new GeneDAO("testCollection");
+                let gene_bs = new GeneBS("testCollection");
                 let lista_response;
 
                 let gene_searcher = new GeneSearcher();
@@ -67,14 +69,34 @@ export class UserRestService {
 
                 //console.log("LA RESPUESTA FINAL", lista_response);
 
-                let ncbiTest = gene_dao.downloadGeneFromNcbi(gene_dto).then((theGeneDTO) => {
-                    gene_dao.insertGeneObject(connection, theGeneDTO);
-                    console.log("insertaddooooooo");
-                }).catch(Exception => {
-                    console.log(Exception);
+                // let ncbiTest = gene_dao.downloadGeneFromNcbi(gene_dto).then((theGeneDTO) => {
+                //     gene_dao.insertGeneObject(connection, theGeneDTO);
+                //     console.log("insertaddooooooo");
+                // }).catch(Exception => {
+                //     console.log(Exception);
+                // });
+                // console.log("El servicio no se queda pillado");
+                //console.log(ncbiTest);
+
+                let gene_dto_1 = new GeneDTO();
+                gene_dto_1._geneId = "12";
+
+                let gene_dto_2 = new GeneDTO();
+                gene_dto_2._geneId = "20";
+
+                let gene_dto_3 = new GeneDTO();
+                gene_dto_3._geneId = "19";
+
+                let gene_list = new Array<GeneDTO>();
+                gene_list.push(gene_dto_1);
+                gene_list.push(gene_dto_2);
+                gene_list.push(gene_dto_3);
+
+                let ncbiTest = gene_bs.downloadGeneObjectsFromListOfIdsThroughNcbi(gene_list).then((list_downloaded) => {
+                    gene_dao.insertGenesFromListOfObjects(connection, list_downloaded);
+                    console.log("Insertadooooooosss")
                 });
                 console.log("El servicio no se queda pillado");
-                //console.log(ncbiTest);
 
                 ////////////////////////////////////////////////////
 
