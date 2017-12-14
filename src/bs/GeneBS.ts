@@ -1,8 +1,9 @@
 import {GeneDTO} from "../domain/GeneDTO";
 import * as Q from "q";
-import Axios from 'axios';
-import {GeneDAO} from "./GeneDAO";
+import {GeneDAO} from "../dao/GeneDAO";
 import {MessageConstants} from "../constants/MessageConstants";
+import {Db} from "mongodb";
+import {GeneSearcher} from "../domain/GeneSearcher";
 
 export class GeneBS {
     private _collectionNameToConnect: string;
@@ -13,6 +14,22 @@ export class GeneBS {
         this._geneDAO = new GeneDAO(collectionNameToConnect);
     }
 
+    public searchGenesAndReturnAListOfObjects(connectionReference: Db, geneSearcher: GeneSearcher): Q.IPromise<Array<GeneDTO>> {
+        let deferred: Q.Deferred<Array<GeneDTO>>;
+        deferred = Q.defer<Array<GeneDTO>>();
+        let listGeneRecords: Array<GeneDTO> = null;
+
+        try {
+            this._geneDAO.searchGenesAndReturnAListOfObjects(connectionReference, geneSearcher).then((resultListOfGenes) => {
+                listGeneRecords = resultListOfGenes;
+                deferred.resolve(listGeneRecords);
+            });
+            return deferred.promise;
+        } catch (Exception) {
+            throw Exception;
+        }
+    }
+
     public async downloadGeneObjectsFromListOfIdsThroughNcbi(listOfGenesToDownload: Array<GeneDTO>): Promise<Array<GeneDTO>> {
         let deferred: Q.Deferred<Array<GeneDTO>>;
         deferred = Q.defer<Array<GeneDTO>>();
@@ -21,10 +38,8 @@ export class GeneBS {
         try {
             listDownloadedGenes = new Array<GeneDTO>();
             for (let singleGen of listOfGenesToDownload) {
-                console.log("Voy a descargar el gen ", singleGen._geneId);
                 try {
                     let downloadedGene = await this._geneDAO.downloadGeneFromNcbi(singleGen);
-                    console.log("Descargado el gen ", downloadedGene._geneId);
                     listDownloadedGenes.push(downloadedGene);
 
                 } catch (Exception) {

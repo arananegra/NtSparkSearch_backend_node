@@ -7,7 +7,7 @@ import * as Q from "q";
 import * as XLSX from "xlsx";
 import * as _ from "lodash";
 import * as fasta from "bionode-fasta"
-import Axios, {AxiosPromise} from "axios";
+import Axios from "axios";
 import {parseString} from "xml2js"
 
 export class GeneDAO {
@@ -80,7 +80,6 @@ export class GeneDAO {
         } catch (Exception) {
             throw Exception;
         }
-
     }
 
     public getAllGenesAsMap(connectionReference: Db): Q.IPromise<Map<string, string>> {
