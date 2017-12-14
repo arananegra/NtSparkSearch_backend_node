@@ -30,10 +30,6 @@ export class UserRestService {
 
         this._app.get(ServicesRouteConstants.TEST_SERVICE, async function (req, res) {
             try {
-                // userSearcher = new UserSearcherDTO();
-                // userBS = new UserBS();
-                //
-                // userSearcher.userIdSearchCriteria = req.params.id;
 
                 let mongoDbDTO: MongoDBConfigurationDTO = new MongoDBConfigurationDTO();
                 mongoDbDTO.clientReference = "localhost";
@@ -141,19 +137,6 @@ export class UserRestService {
                 geneDTO._sequence = "GATCA";
 
                 res.status(200).send(JSON.stringify(geneDTO));
-
-                // userBS.searchSingleUserById(userSearcher)
-                //     .then((singleUserFound) => {
-                //         if (singleUserFound) {
-                //
-                //             JsonSerializationBS.serialization(singleUserFound)
-                //                 .then((serializedObject) => {
-                //                     res.status(200).send(serializedObject);
-                //                 });
-                //         } else {
-                //             res.status(404);
-                //         }
-                //     });
 
             } catch (Exception) {
                 console.log("Es un exceptionnnn del servicioo!!!!", Exception);

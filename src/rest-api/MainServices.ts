@@ -1,6 +1,5 @@
-
-
 import {UserRestService} from "./UserRestService";
+
 export class MainServices {
 
     public constructor(application: any) {

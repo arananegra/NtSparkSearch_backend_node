@@ -30,6 +30,42 @@ export class GeneBS {
         }
     }
 
+    public getAllGenesAsListOfObjects(connectionReference: Db): Q.IPromise<Array<GeneDTO>> {
+        let deferred: Q.Deferred<Array<GeneDTO>>;
+        deferred = Q.defer<Array<GeneDTO>>();
+        let listGeneRecords: Array<GeneDTO> = null;
+
+        try {
+            this._geneDAO.getAllGenesAsListOfObjects(connectionReference).then((resultListOfGenes) => {
+                listGeneRecords = resultListOfGenes;
+                deferred.resolve(listGeneRecords);
+            });
+
+            return deferred.promise;
+
+        } catch (Exception) {
+            throw Exception;
+        }
+    }
+
+    public getAllGenesAsMap(connectionReference: Db): Q.IPromise<Map<string, string>> {
+        let deferred: Q.Deferred<Map<string, string>>;
+        deferred = Q.defer<Map<string, string>>();
+
+        let mapOfGenes: Map<string, string> = null;
+        try {
+            this._geneDAO.getAllGenesAsMap(connectionReference).then((resultMapOfGenes) => {
+
+            });
+
+
+            return deferred.promise;
+
+        } catch (Exception) {
+            throw Exception;
+        }
+    }
+
     public async downloadGeneObjectsFromListOfIdsThroughNcbi(listOfGenesToDownload: Array<GeneDTO>): Promise<Array<GeneDTO>> {
         let deferred: Q.Deferred<Array<GeneDTO>>;
         deferred = Q.defer<Array<GeneDTO>>();
