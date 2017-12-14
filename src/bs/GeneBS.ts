@@ -51,16 +51,38 @@ export class GeneBS {
     public getAllGenesAsMap(connectionReference: Db): Q.IPromise<Map<string, string>> {
         let deferred: Q.Deferred<Map<string, string>>;
         deferred = Q.defer<Map<string, string>>();
-
         let mapOfGenes: Map<string, string> = null;
+
         try {
             this._geneDAO.getAllGenesAsMap(connectionReference).then((resultMapOfGenes) => {
-
+                mapOfGenes = resultMapOfGenes;
+                deferred.resolve(mapOfGenes);
             });
-
-
             return deferred.promise;
 
+        } catch (Exception) {
+            throw Exception;
+        }
+    }
+
+    public getListOfGenesFromXlrd(filePath: string, sheetNumber: number): Array<GeneDTO> {
+        try {
+            return this._geneDAO.getListOfGenesFromXlrd(filePath, sheetNumber);
+        } catch (Exception) {
+            throw Exception;
+        }
+    }
+    //TODO: deferred.resolve(null);
+    public getListOfGenesFromFasta(filePath: string): Q.IPromise<Array<GeneDTO>> {
+        let deferred: Q.Deferred<Array<GeneDTO>>;
+        deferred = Q.defer<Array<GeneDTO>>();
+        let geneDtoList: Array<GeneDTO> = new Array<GeneDTO>();
+        try {
+            this._geneDAO.getListOfGenesFromFasta(filePath).then((resultListOfGenes) => {
+                geneDtoList = resultListOfGenes;
+                deferred.resolve(geneDtoList);
+            });
+            return deferred.promise;
         } catch (Exception) {
             throw Exception;
         }
