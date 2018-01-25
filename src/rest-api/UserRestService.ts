@@ -6,6 +6,7 @@ import {ServicesRouteConstants} from "../constants/ServicesRouteConstants";
 import {GeneDTO} from "../domain/GeneDTO";
 import {DbConnectionBS} from "../bs/DbConnectionBS";
 import {MongoDBConfigurationDTO} from "../domain/MongoDBConfigurationDTO";
+import * as express from "express";
 import {Db} from "mongodb"
 import {CollectionIndexCreator} from "../dao/CollectionIndexCreator";
 import {GeneDAO} from "../dao/GeneDAO";
@@ -13,9 +14,9 @@ import {GeneSearcher} from "../domain/GeneSearcher";
 import {GeneBS} from "../bs/GeneBS";
 
 export class UserRestService {
-    private _app: any;
+    private _app: express.Router;
 
-    public constructor(app: any) {
+    public constructor(app: express.Router) {
         this._app = app;
         this.initializeUserServiceRoutes();
     }
@@ -28,7 +29,7 @@ export class UserRestService {
 
         let connectionReference: any;
 
-        this._app.get(ServicesRouteConstants.TEST_SERVICE, async function (req, res) {
+        this._app.get(ServicesRouteConstants.TEST_SERVICE, async function (req: express.Request, res: express.Response) {
             try {
 
                 let mongoDbDTO: MongoDBConfigurationDTO = new MongoDBConfigurationDTO();
@@ -38,8 +39,8 @@ export class UserRestService {
 
                 let gene_dto = new GeneDTO();
 
-                gene_dto._geneId = "0";
-                //gene_dto._sequence = "GATCAGC";
+                gene_dto._geneId = "01";
+                gene_dto._sequence = "GATCAGC";
 
 
                 let connection = await DbConnectionBS.getConnection(mongoDbDTO);
@@ -49,7 +50,7 @@ export class UserRestService {
                 let lista_response;
 
                 let gene_searcher = new GeneSearcher();
-                gene_searcher.gene_id_criteria = "12";
+                gene_searcher.gene_id_criteria = "014";
 
                 let mapOfTest = new Map();
 
@@ -133,7 +134,7 @@ export class UserRestService {
                 //console.log(connectionReference);
                 let geneDTO = new GeneDTO();
 
-                geneDTO._geneId = "01";
+                geneDTO._geneId = "02";
                 geneDTO._sequence = "GATCA";
 
                 res.status(200).send(JSON.stringify(geneDTO));

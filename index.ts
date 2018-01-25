@@ -5,12 +5,11 @@ import * as bodyParser from "body-parser";
 
 //Own files imports
 import {MainServices} from "./src/rest-api/MainServices";
-
 //Global variables declaration
-let app = express();
+let app: express.Application = express();
 
 //Global Router Declaration
-let router = express.Router();
+let router: express.Router = express.Router();
 
 //Handle Json Body
 app.use(bodyParser.json());
@@ -18,7 +17,7 @@ app.use(bodyParser.json());
 // Logs directory
 
 //Enable CORS
-app.use(function(req, res, next) {
+app.use(function(req: express.Request, res: express.Response, next: express.NextFunction) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "*");
     res.header("Access-Control-Allow-Headers", "*");

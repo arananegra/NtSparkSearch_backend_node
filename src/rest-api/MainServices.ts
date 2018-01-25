@@ -1,8 +1,9 @@
 import {UserRestService} from "./UserRestService";
+import * as express from "express";
 
 export class MainServices {
 
-    public constructor(application: any) {
+    public constructor(applicationRouter: express.Router) {
         // new ClinicalTrialPhaseRestService(application);
         // new ClinicalTrialRestService(application);
         // new ClinicalTrialStageRestService(application);
@@ -10,7 +11,7 @@ export class MainServices {
         // new TumorLocalizationRestService(application);
         // new EconomicFundingTypeRestService(application);
         // new ExclusionInclusionCriteriaRestService(application);
-        new UserRestService(application);
+        new UserRestService(applicationRouter);
         // new RolPermissionRestService(application);
     }
 }
