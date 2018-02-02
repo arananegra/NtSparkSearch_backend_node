@@ -4,6 +4,8 @@
   "description": "NtSparkSearch",
   "main": "index.js",
   "scripts": {
+    "test": "./node_modules/mocha/bin/mocha start -r ts-node/register ./test/src/**/*.spec.ts",
+    "test:watch": "./node_modules/mocha/bin/mocha start --watch-extensions ts --watch -r ts-node/register ./test/src/**/*.spec.ts",
     "build": "npm install && ./node_modules/webpack/bin/webpack.js --env=pro-compilation",
     "build:dev": "npm install && ./node_modules/webpack/bin/webpack.js --env=pre-compilation",
     "start:dev": "./node_modules/webpack/bin/webpack.js --watch --env=pre-compilation",
