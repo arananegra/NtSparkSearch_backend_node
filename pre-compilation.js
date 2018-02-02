@@ -1,6 +1,6 @@
 let path = require('path');
 let webpack = require("webpack");
-//let nodeExternals = require('webpack-node-externals');
+let nodeExternals = require('webpack-node-externals');
 
 let basePath = __dirname;
 
@@ -13,7 +13,7 @@ let basePath = __dirname;
             extensions: ['.ts', '.tsx', '.js', '.jsx']
         },
         target: "node",
-        //externals: [nodeExternals()],
+        externals: [nodeExternals()],
 
         node: {
             fs: "empty",
@@ -28,15 +28,6 @@ let basePath = __dirname;
         output: {
             path: path.join(basePath, './dist'),
             filename: 'ntsparksearch_backend.js'
-        },
-
-        //https://webpack.github.io/docs/webpack-dev-server.html#webpack-dev-server-cli
-        devServer: {
-            contentBase: './dist', //Content base
-            inline: true, //Enable watch and live reload
-            host: '0.0.0.0',
-            port: 3002,
-            hot: true
         },
 
         // http://webpack.github.io/docs/configuration.html#devtool

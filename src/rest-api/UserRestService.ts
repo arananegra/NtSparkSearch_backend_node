@@ -44,9 +44,8 @@ export class UserRestService {
 
 
                 let connection = await DbConnectionBS.getConnection(mongoDbDTO);
-
                 let gene_dao = new GeneDAO("testCollection");
-                let gene_bs = new GeneBS("testCollection");
+                let gene_bs = new GeneBS("testCollection", connection);
                 let lista_response;
 
                 let gene_searcher = new GeneSearcher();
@@ -54,12 +53,18 @@ export class UserRestService {
 
                 let mapOfTest = new Map();
 
-                mapOfTest.set("013", "GCTGACA");
-                mapOfTest.set("014", "TTTTTT");
+                mapOfTest.set("012", "GCTGACA");
+                mapOfTest.set("015", "TTTTTT");
+
+                //
+                // let listOfGenes = gene_bs.searchGenesAndReturnAListOfObjects(gene_searcher).then((result) => {
+                //     console.log("La lista de genes encontradooooos", result);
+                // });
+
 
                 // console.log("EL MAP A INSERTAR", mapOfTest);
 
-                //await gene_dao.insertGeneDocumentFromNonObjectDict(connection, mapOfTest);
+                await gene_dao.insertGeneDocumentFromNonObjectDict(connection, mapOfTest);
 
                 //let thing = await gene_dao.getListOfGenesFromFasta("/Users/alvarogomez/testing_files/test.fasta");
                 //console.log("LO QUE OBTENGO DEL fasta,", thing);
@@ -98,10 +103,6 @@ export class UserRestService {
                 //     console.log("Insertadooooooosss")
                 // });
                 // console.log("El servicio no se queda pillado");
-
-                let listOfGenes = gene_bs.searchGenesAndReturnAListOfObjects(connection,gene_searcher).then((result) => {
-                   console.log("La lista de genes encontradooooos", result);
-                });
 
                 ////////////////////////////////////////////////////
 

@@ -8,19 +8,21 @@ import {GeneSearcher} from "../domain/GeneSearcher";
 export class GeneBS {
     private _collectionNameToConnect: string;
     private _geneDAO: GeneDAO;
+    private _connectionReference: Db;
 
-    public constructor(collectionNameToConnect) {
+    public constructor(collectionNameToConnect, connectionReference) {
         this._collectionNameToConnect = collectionNameToConnect;
         this._geneDAO = new GeneDAO(collectionNameToConnect);
+        this._collectionNameToConnect = connectionReference;
     }
 
-    public searchGenesAndReturnAListOfObjects(connectionReference: Db, geneSearcher: GeneSearcher): Q.IPromise<Array<GeneDTO>> {
+    public searchGenesAndReturnAListOfObjects(geneSearcher: GeneSearcher): Q.IPromise<Array<GeneDTO>> {
         let deferred: Q.Deferred<Array<GeneDTO>>;
         deferred = Q.defer<Array<GeneDTO>>();
         let listGeneRecords: Array<GeneDTO> = null;
 
         try {
-            this._geneDAO.searchGenesAndReturnAListOfObjects(connectionReference, geneSearcher).then((resultListOfGenes) => {
+            this._geneDAO.searchGenesAndReturnAListOfObjects(this._connectionReference, geneSearcher).then((resultListOfGenes) => {
                 listGeneRecords = resultListOfGenes;
                 deferred.resolve(listGeneRecords);
             });
@@ -30,13 +32,13 @@ export class GeneBS {
         }
     }
 
-    public getAllGenesAsListOfObjects(connectionReference: Db): Q.IPromise<Array<GeneDTO>> {
+    public getAllGenesAsListOfObjects(): Q.IPromise<Array<GeneDTO>> {
         let deferred: Q.Deferred<Array<GeneDTO>>;
         deferred = Q.defer<Array<GeneDTO>>();
         let listGeneRecords: Array<GeneDTO> = null;
 
         try {
-            this._geneDAO.getAllGenesAsListOfObjects(connectionReference).then((resultListOfGenes) => {
+            this._geneDAO.getAllGenesAsListOfObjects(this._connectionReference).then((resultListOfGenes) => {
                 listGeneRecords = resultListOfGenes;
                 deferred.resolve(listGeneRecords);
             });
@@ -48,13 +50,13 @@ export class GeneBS {
         }
     }
 
-    public getAllGenesAsMap(connectionReference: Db): Q.IPromise<Map<string, string>> {
+    public getAllGenesAsMap(): Q.IPromise<Map<string, string>> {
         let deferred: Q.Deferred<Map<string, string>>;
         deferred = Q.defer<Map<string, string>>();
         let mapOfGenes: Map<string, string> = null;
 
         try {
-            this._geneDAO.getAllGenesAsMap(connectionReference).then((resultMapOfGenes) => {
+            this._geneDAO.getAllGenesAsMap(this._connectionReference).then((resultMapOfGenes) => {
                 mapOfGenes = resultMapOfGenes;
                 deferred.resolve(mapOfGenes);
             });
