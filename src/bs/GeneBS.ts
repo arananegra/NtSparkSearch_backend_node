@@ -13,37 +13,31 @@ export class GeneBS {
     public constructor(collectionNameToConnect, connectionReference) {
         this._collectionNameToConnect = collectionNameToConnect;
         this._geneDAO = new GeneDAO(collectionNameToConnect);
-        this._collectionNameToConnect = connectionReference;
+        this._connectionReference = connectionReference;
     }
 
-    public searchGenesAndReturnAListOfObjects(geneSearcher: GeneSearcher): Q.IPromise<Array<GeneDTO>> {
-        let deferred: Q.Deferred<Array<GeneDTO>>;
-        deferred = Q.defer<Array<GeneDTO>>();
+    public searchGenesAndReturnAListOfObjects(geneSearcher: GeneSearcher): Promise<Array<GeneDTO>> {
         let listGeneRecords: Array<GeneDTO> = null;
 
         try {
-            this._geneDAO.searchGenesAndReturnAListOfObjects(this._connectionReference, geneSearcher).then((resultListOfGenes) => {
-                listGeneRecords = resultListOfGenes;
-                deferred.resolve(listGeneRecords);
+            return new Promise<Array<GeneDTO>>((resolve, reject) => {
+                this._geneDAO.searchGenesAndReturnAListOfObjects(this._connectionReference, geneSearcher).then((resultListOfGenes) => {
+                    listGeneRecords = resultListOfGenes;
+                    resolve(listGeneRecords);
+                }).catch(err => reject(err))
             });
-            return deferred.promise;
         } catch (Exception) {
             throw Exception;
         }
     }
 
-    public getAllGenesAsListOfObjects(): Q.IPromise<Array<GeneDTO>> {
-        let deferred: Q.Deferred<Array<GeneDTO>>;
-        deferred = Q.defer<Array<GeneDTO>>();
-        let listGeneRecords: Array<GeneDTO> = null;
-
+    public getAllGenesAsListOfObjects(): Promise<Array<GeneDTO>> {
         try {
-            this._geneDAO.getAllGenesAsListOfObjects(this._connectionReference).then((resultListOfGenes) => {
-                listGeneRecords = resultListOfGenes;
-                deferred.resolve(listGeneRecords);
+            return new Promise<Array<GeneDTO>>((resolve, reject) => {
+                this._geneDAO.getAllGenesAsListOfObjects(this._connectionReference).then((resultListOfGenes) => {
+                    resolve(resultListOfGenes)
+                }).catch(err => reject(err))
             });
-
-            return deferred.promise;
 
         } catch (Exception) {
             throw Exception;

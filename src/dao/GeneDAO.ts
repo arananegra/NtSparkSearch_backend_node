@@ -18,9 +18,7 @@ export class GeneDAO {
         this._collectionNameToConnect = collectionNameToConnect;
     }
 
-    public searchGenesAndReturnAListOfObjects(connectionReference: Db, geneSearcher: GeneSearcher): Q.IPromise<Array<GeneDTO>> {
-        let deferred: Q.Deferred<Array<GeneDTO>>;
-        deferred = Q.defer<Array<GeneDTO>>();
+    public searchGenesAndReturnAListOfObjects(connectionReference: Db, geneSearcher: GeneSearcher): Promise<Array<GeneDTO>> {
         let collectionFromConnectionReference: Collection = null;
         let singleGeneRecord: GeneDTO = null;
         let listGeneRecords: Array<GeneDTO> = null;
@@ -37,46 +35,48 @@ export class GeneDAO {
 
             CollectionIndexCreator.createIndex(collectionFromConnectionReference, DatabaseConstants.GENE_ID_FIELD_NAME);
 
-            collectionFromConnectionReference.find({"$text": {"$search": mongodbFindByIdCriteria}}).toArray((err, docs) => {
-                docs.map((singleGenFound) => {
-                    singleGeneRecord = new GeneDTO();
-                    singleGeneRecord._geneId = singleGenFound._geneId;
-                    singleGeneRecord._sequence = singleGenFound._sequence;
+            return new Promise<Array<GeneDTO>>((resolve, reject) => {
+                collectionFromConnectionReference.find({"$text": {"$search": mongodbFindByIdCriteria}}).toArray((err, docs) => {
+                    if (err) {
+                        reject(err)
+                    } else {
+                        docs.map((singleGenFound) => {
+                            singleGeneRecord = new GeneDTO();
+                            singleGeneRecord._geneId = singleGenFound._geneId;
+                            singleGeneRecord._sequence = singleGenFound._sequence;
 
-                    listGeneRecords.push(singleGenFound);
+                            listGeneRecords.push(singleGenFound);
+                        });
+                        resolve(listGeneRecords);
+                    }
                 });
-                deferred.resolve(listGeneRecords);
             });
-            return deferred.promise;
 
         } catch (Exception) {
             throw Exception;
         }
     }
 
-    public getAllGenesAsListOfObjects(connectionReference: Db): Q.IPromise<Array<GeneDTO>> {
-        let deferred: Q.Deferred<Array<GeneDTO>>;
-        deferred = Q.defer<Array<GeneDTO>>();
+    public getAllGenesAsListOfObjects(connectionReference: Db): Promise<Array<GeneDTO>> {
         let collectionFromConnectionReference: Collection = null;
         let singleGeneRecord: GeneDTO = null;
         let listGeneRecords: Array<GeneDTO> = null;
-
         try {
-            collectionFromConnectionReference = connectionReference.collection(this._collectionNameToConnect);
-            listGeneRecords = new Array<GeneDTO>();
+            return new Promise<Array<GeneDTO>>((resolve, reject) => {
+                collectionFromConnectionReference = connectionReference.collection(this._collectionNameToConnect);
+                listGeneRecords = new Array<GeneDTO>();
 
-            collectionFromConnectionReference.find({}).toArray((err, docs) => {
-                docs.map((singleGenFound) => {
-                    singleGeneRecord = new GeneDTO();
-                    singleGeneRecord._geneId = singleGenFound._geneId;
-                    singleGeneRecord._sequence = singleGenFound._sequence;
+                collectionFromConnectionReference.find({}).toArray((err, docs) => {
+                    docs.map((singleGenFound) => {
+                        singleGeneRecord = new GeneDTO();
+                        singleGeneRecord._geneId = singleGenFound._geneId;
+                        singleGeneRecord._sequence = singleGenFound._sequence;
 
-                    listGeneRecords.push(singleGenFound);
+                        listGeneRecords.push(singleGenFound);
+                    });
+                    resolve(listGeneRecords);
                 });
-                deferred.resolve(listGeneRecords);
             });
-            return deferred.promise;
-
         } catch (Exception) {
             throw Exception;
         }
