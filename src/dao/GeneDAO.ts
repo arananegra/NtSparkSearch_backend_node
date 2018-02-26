@@ -62,19 +62,23 @@ export class GeneDAO {
         let singleGeneRecord: GeneDTO = null;
         let listGeneRecords: Array<GeneDTO> = null;
         try {
+            collectionFromConnectionReference = connectionReference.collection(this._collectionNameToConnect);
+            listGeneRecords = new Array<GeneDTO>();
             return new Promise<Array<GeneDTO>>((resolve, reject) => {
-                collectionFromConnectionReference = connectionReference.collection(this._collectionNameToConnect);
-                listGeneRecords = new Array<GeneDTO>();
-
                 collectionFromConnectionReference.find({}).toArray((err, docs) => {
-                    docs.map((singleGenFound) => {
-                        singleGeneRecord = new GeneDTO();
-                        singleGeneRecord._geneId = singleGenFound._geneId;
-                        singleGeneRecord._sequence = singleGenFound._sequence;
+                    if (err) {
+                        reject(err);
+                    }
+                    else {
+                        docs.map((singleGenFound) => {
+                            singleGeneRecord = new GeneDTO();
+                            singleGeneRecord._geneId = singleGenFound._geneId;
+                            singleGeneRecord._sequence = singleGenFound._sequence;
 
-                        listGeneRecords.push(singleGenFound);
-                    });
-                    resolve(listGeneRecords);
+                            listGeneRecords.push(singleGenFound);
+                        });
+                        resolve(listGeneRecords);
+                    }
                 });
             });
         } catch (Exception) {
@@ -82,24 +86,25 @@ export class GeneDAO {
         }
     }
 
-    public getAllGenesAsMap(connectionReference: Db): Q.IPromise<Map<string, string>> {
-        let deferred: Q.Deferred<Map<string, string>>;
-        deferred = Q.defer<Map<string, string>>();
-
+    public getAllGenesAsMap(connectionReference: Db): Promise<Map<string, string>> {
         let collectionFromConnectionReference: Collection = null;
         let mapOfGenes: Map<string, string> = null;
         try {
             mapOfGenes = new Map();
             collectionFromConnectionReference = connectionReference.collection(this._collectionNameToConnect);
 
-            collectionFromConnectionReference.find({}).toArray((err, docs) => {
-                docs.map((singleGenFound) => {
-                    mapOfGenes.set(singleGenFound._geneId, singleGenFound._sequence)
+            return new Promise<Map<string, string>>((resolve, reject) => {
+                collectionFromConnectionReference.find({}).toArray((err, docs) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        docs.map((singleGenFound) => {
+                            mapOfGenes.set(singleGenFound._geneId, singleGenFound._sequence)
+                        });
+                        resolve(mapOfGenes);
+                    }
                 });
-                deferred.resolve(mapOfGenes);
-            });
-            return deferred.promise;
-
+            })
         } catch (Exception) {
             throw Exception;
         }
@@ -157,9 +162,10 @@ export class GeneDAO {
 
     public insertGenesFromListOfObjects(connectionReference: Db, genesToInsert: Array<GeneDTO>) {
         try {
-            genesToInsert.map((geneToInsert) => {
-                this.insertGeneObject(connectionReference, geneToInsert);
-            });
+            connectionReference.collection(this._collectionNameToConnect).insertMany(genesToInsert);
+            // genesToInsert.map((geneToInsert) => {
+            //     this.insertGeneObject(connectionReference, geneToInsert);
+            // });
 
         } catch (Exception) {
             throw Exception;
@@ -169,13 +175,12 @@ export class GeneDAO {
     public insertGeneDocumentFromNonObjectDict(connectionReference: Db, genesMapToInsert: Map<string, string>) {
         try {
             let list = genesMapToInsert.entries();
-            for (let [key, value] of genesMapToInsert) {
+            genesMapToInsert.forEach((value: string, key: string) => {
                 let geneDTO = new GeneDTO();
                 geneDTO._geneId = key;
                 geneDTO._sequence = value;
-
                 this.insertGeneObject(connectionReference, geneDTO);
-            }
+            });
 
         } catch (Exception) {
             throw Exception;
@@ -183,37 +188,38 @@ export class GeneDAO {
     }
 
     public async downloadGeneFromNcbi(singleGene: GeneDTO): Promise<GeneDTO> {
-        let deferred: Q.Deferred<GeneDTO>;
-        deferred = Q.defer<GeneDTO>();
         let fulFilledGeneObject = null;
+        return new Promise<GeneDTO>(async (resolve, reject) => {
+            try {
+                let metaInfoAboutGene = await this.getMetaInfoAboutGene(singleGene._geneId);
+                parseString(metaInfoAboutGene, async (err, result) => {
+                    let geneRegion = result['Entrezgene-Set']["Entrezgene"][0]["Entrezgene_locus"][0]["Gene-commentary"][0]
+                        ["Gene-commentary_seqs"][0]["Seq-loc"][0]['Seq-loc_int'][0]['Seq-interval'];
+                    let startPos = Number(geneRegion[0]["Seq-interval_from"][0]) + 1;
+                    let endPost = Number(geneRegion[0]["Seq-interval_to"][0]) + 1;
 
-        try {
-            let metaInfoAboutGene = await this.getMetaInfoAboutGene(singleGene._geneId);
-            parseString(metaInfoAboutGene, async (err, result) => {
-                let geneRegion = result['Entrezgene-Set']["Entrezgene"][0]["Entrezgene_locus"][0]["Gene-commentary"][0]
-                    ["Gene-commentary_seqs"][0]["Seq-loc"][0]['Seq-loc_int'][0]['Seq-interval'];
-                let startPos = Number(geneRegion[0]["Seq-interval_from"][0]) + 1;
-                let endPost = Number(geneRegion[0]["Seq-interval_to"][0]) + 1;
+                    let intervalId = geneRegion[0]["Seq-interval_id"][0]["Seq-id"][0]["Seq-id_gi"][0];
 
-                let intervalId = geneRegion[0]["Seq-interval_id"][0]["Seq-id"][0]["Seq-id_gi"][0];
+                    let strandSense = geneRegion[0]["Seq-interval_strand"][0]["Na-strand"][0]["$"]["value"];
+                    strandSense === "minus" ? strandSense = 2 : strandSense = 1;
 
-                let strandSense = geneRegion[0]["Seq-interval_strand"][0]["Na-strand"][0]["$"]["value"];
-                strandSense === "minus" ? strandSense = 2 : strandSense = 1;
+                    let fastaResponse = await this.getFastaFromGene(intervalId, startPos, endPost, strandSense);
+                    let fastaResponseWithoutHeader = fastaResponse.substring(fastaResponse.indexOf("\n") + 1);
+                    let fastaSingleLine = fastaResponseWithoutHeader.replace(/[\n]/g, "");
 
-                let fastaResponse = await this.getFastaFromGene(intervalId, startPos, endPost, strandSense);
-                let fastaResponseWithoutHeader = fastaResponse.substring(fastaResponse.indexOf("\n") + 1);
-                let fastaSingleLine = fastaResponseWithoutHeader.replace(/[\n]/g, "");
+                    let singleFulFilledGene = new GeneDTO();
+                    singleFulFilledGene._geneId = singleGene._geneId;
+                    singleFulFilledGene._sequence = fastaSingleLine;
+                    fulFilledGeneObject = singleFulFilledGene;
+                    resolve(fulFilledGeneObject);
+                });
+            } catch (ex) {
+                //TODO quitar esto
+                console.log("Salto en el catch del downloadDAO");
+                reject(ex);
+            }
 
-                let singleFulFilledGene = new GeneDTO();
-                singleFulFilledGene._geneId = singleGene._geneId;
-                singleFulFilledGene._sequence = fastaSingleLine;
-                fulFilledGeneObject = singleFulFilledGene;
-                deferred.resolve(fulFilledGeneObject);
-            });
-            return deferred.promise;
-        } catch (Exception) {
-            throw Exception;
-        }
+        });
     }
 
     private getMetaInfoAboutGene(geneId: string): Promise<string> {
@@ -222,6 +228,8 @@ export class GeneDAO {
             .then(response => {
                 return response.data;
             }).catch(Exception => {
+                //TODO quitar esto
+                console.log("salto en el catch de getMetaInfo");
                 throw Exception;
             });
     }

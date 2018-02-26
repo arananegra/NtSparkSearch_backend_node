@@ -1,14 +1,8 @@
-// import {UserSearcherDTO} from "mks-appenco-domain/dist";
-// import {UserBS} from "../bs/UserBS";
-// import {ServicesRouteConstants} from "../constants/ServicesRouteConstants";
-// import {HttpConstants, JsonSerializationBS} from "mks-standard-infraestructure/dist";
 import {ServicesRouteConstants} from "../constants/ServicesRouteConstants";
 import {GeneDTO} from "../domain/GeneDTO";
 import {DbConnectionBS} from "../bs/DbConnectionBS";
 import {MongoDBConfigurationDTO} from "../domain/MongoDBConfigurationDTO";
 import * as express from "express";
-import {Db} from "mongodb"
-import {CollectionIndexCreator} from "../dao/CollectionIndexCreator";
 import {GeneDAO} from "../dao/GeneDAO";
 import {GeneSearcher} from "../domain/GeneSearcher";
 import {GeneBS} from "../bs/GeneBS";
@@ -26,8 +20,6 @@ export class UserRestService {
     }
 
     private async searchUserById() {
-
-        let connectionReference: any;
 
         this._app.get(ServicesRouteConstants.TEST_SERVICE, async function (req: express.Request, res: express.Response) {
             try {
@@ -48,8 +40,8 @@ export class UserRestService {
                 let gene_bs = new GeneBS("testCollection", connection);
                 let lista_response;
 
-                let gene_searcher = new GeneSearcher();
-                gene_searcher.gene_id_criteria = "0";
+                // let gene_searcher = new GeneSearcher();
+                // gene_searcher.gene_id_criteria = "0";
 
                 // let mapOfTest = new Map();
                 //
@@ -57,9 +49,10 @@ export class UserRestService {
                 // mapOfTest.set("015", "TTTTTT");
 
 
-                let listOfGenes = gene_bs.searchGenesAndReturnAListOfObjects(gene_searcher).then((result) => {
-                    console.log("La lista de genes encontradooooos", result);
-                });
+                // gene_bs.searchGenesAndReturnAListOfObjects(gene_searcher).then((result) => {
+                //     console.log("La lista de genes encontradooooos", listOfGenes);
+                //     res.status(200).send(JSON.stringify(result));
+                // });
 
 
                 // console.log("EL MAP A INSERTAR", mapOfTest);
@@ -101,18 +94,17 @@ export class UserRestService {
                 // gene_list.push(gene_dto_2_5);
                 // gene_list.push(gene_dto_3);
                 // //
-                // let ncbiTest = gene_bs.downloadGeneObjectsFromListOfIdsThroughNcbi(gene_list).then((list_downloaded) => {
-                //     gene_dao.insertGenesFromListOfObjects(connection, list_downloaded);
-                //     console.log("Insertadooooooosss")
-                // });
-                // console.log("El servicio no se queda pillado");
 
-                let geneDTO = new GeneDTO();
+                let gene_list = await gene_dao.getListOfGenesFromXlrd("/home/alvaro-pc/DEG_test.xlsx", 1);
+                let ncbiTest = gene_bs.downloadGeneObjectsFromListOfIdsThroughNcbi(gene_list).then((list_downloaded) => {
+                    gene_dao.insertGenesFromListOfObjects(connection, list_downloaded);
+                    console.log("Insertadooooooosss")
+                })
 
-                geneDTO._geneId = "02";
-                geneDTO._sequence = "GATCA";
+                console.log("El servicio no se queda pillado");
 
-                res.status(200).send(JSON.stringify(geneDTO));
+
+                res.status(202).send();
 
             } catch (Exception) {
                 console.log("Es un exceptionnnn del servicioo!!!!", Exception);

@@ -68,6 +68,7 @@ export class GeneBS {
             throw Exception;
         }
     }
+
     //TODO: deferred.resolve(null);
     public getListOfGenesFromFasta(filePath: string): Q.IPromise<Array<GeneDTO>> {
         let deferred: Q.Deferred<Array<GeneDTO>>;
@@ -85,29 +86,36 @@ export class GeneBS {
     }
 
     public async downloadGeneObjectsFromListOfIdsThroughNcbi(listOfGenesToDownload: Array<GeneDTO>): Promise<Array<GeneDTO>> {
-        let deferred: Q.Deferred<Array<GeneDTO>>;
-        deferred = Q.defer<Array<GeneDTO>>();
         let listDownloadedGenes: Array<GeneDTO> = null;
-
-        try {
-            listDownloadedGenes = new Array<GeneDTO>();
-            for (let singleGen of listOfGenesToDownload) {
+        return new Promise<Array<GeneDTO>>(async (resolve, reject) => {
                 try {
-                    let downloadedGene = await this._geneDAO.downloadGeneFromNcbi(singleGen);
-                    listDownloadedGenes.push(downloadedGene);
+                    //TODO obtener indice del array para comenzar la descarga y tener feedback
+                    listDownloadedGenes = new Array<GeneDTO>();
+                    //for (var i = 0; i < selectObject.options.length; i++)
+                    for (let singleGen of listOfGenesToDownload) {
 
+                        try {
+                            let downloadedGene = await this._geneDAO.downloadGeneFromNcbi(singleGen);
+
+                            listDownloadedGenes.push(downloadedGene);
+                            listDownloadedGenes.map((value, index) => {
+                                console.log("Gen ", index)
+                            });
+
+                        } catch (Exception) {
+                            console.log("Salto en el catch de la BS dentro de la promise");
+                            singleGen._sequence = null;
+                            listDownloadedGenes.push(singleGen);
+                            console.error(MessageConstants.DOWNLOAD_ERROR_MESSAGE);
+                        }
+                    }
+                    resolve(listDownloadedGenes);
                 } catch (Exception) {
-                    singleGen._sequence = null;
-                    listDownloadedGenes.push(singleGen);
-                    console.error(MessageConstants.DOWNLOAD_ERROR_MESSAGE);
-                    continue;
+                    //TODO quitar esto
+                    console.log("Salto en el catch de la BS fuera de la promise");
+                    throw Exception;
                 }
             }
-            deferred.resolve(listDownloadedGenes);
-            return deferred.promise;
-
-        } catch (Exception) {
-            throw Exception;
-        }
+        );
     }
 }

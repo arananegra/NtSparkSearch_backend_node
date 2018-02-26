@@ -20,18 +20,18 @@
   "homepage": "https://bitbucket.org/arananegrayeye/ntsparksearch_backend_node#readme",
   "dependencies": {
     "axios": "^0.17.1",
-    "xml2js": "^0.4.19",
+    "bionode-fasta": "^0.5.6",
     "body-parser": "^1.18.2",
     "core-js": "^2.4.1",
-    "bionode-fasta": "^0.5.6",
-    "xlsx": "^0.11.10",
     "express": "^4.15.3",
     "istanbul-instrumenter-loader": "^3.0.0",
     "json-object-mapper": "^1.5.1",
     "mongodb": "^2.2.33",
     "mongoose": "^4.13.4",
     "q": "^1.5.1",
-    "reflect-metadata": "^0.1.10"
+    "reflect-metadata": "^0.1.10",
+    "xlsx": "^0.11.10",
+    "xml2js": "^0.4.19"
   },
   "devDependencies": {
     "@types/body-parser": "^1.16.8",
