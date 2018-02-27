@@ -214,8 +214,6 @@ export class GeneDAO {
                     resolve(fulFilledGeneObject);
                 });
             } catch (ex) {
-                //TODO quitar esto
-                console.log("Salto en el catch del downloadDAO");
                 reject(ex);
             }
 
@@ -228,8 +226,6 @@ export class GeneDAO {
             .then(response => {
                 return response.data;
             }).catch(Exception => {
-                //TODO quitar esto
-                console.log("salto en el catch de getMetaInfo");
                 throw Exception;
             });
     }

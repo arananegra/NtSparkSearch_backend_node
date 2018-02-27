@@ -4,6 +4,8 @@ import {GeneDAO} from "../dao/GeneDAO";
 import {MessageConstants} from "../constants/MessageConstants";
 import {Db} from "mongodb";
 import {GeneSearcher} from "../domain/GeneSearcher";
+import {DatabaseConstants} from "../constants/DatabaseConstants";
+import * as _ from "lodash";
 
 export class GeneBS {
     private _collectionNameToConnect: string;
@@ -89,33 +91,52 @@ export class GeneBS {
         let listDownloadedGenes: Array<GeneDTO> = null;
         return new Promise<Array<GeneDTO>>(async (resolve, reject) => {
                 try {
-                    //TODO obtener indice del array para comenzar la descarga y tener feedback
                     listDownloadedGenes = new Array<GeneDTO>();
-                    //for (var i = 0; i < selectObject.options.length; i++)
-                    for (let singleGen of listOfGenesToDownload) {
+
+                    for (let singleGenIndex = 0; singleGenIndex < listOfGenesToDownload.length; singleGenIndex++) {
 
                         try {
-                            let downloadedGene = await this._geneDAO.downloadGeneFromNcbi(singleGen);
+                            let downloadedGene = await this._geneDAO.downloadGeneFromNcbi(listOfGenesToDownload[singleGenIndex]);
 
                             listDownloadedGenes.push(downloadedGene);
-                            listDownloadedGenes.map((value, index) => {
-                                console.log("Gen ", index)
-                            });
+                            console.log("Downloaded gen number " + singleGenIndex + " with id ", listOfGenesToDownload[singleGenIndex]._geneId);
 
                         } catch (Exception) {
-                            console.log("Salto en el catch de la BS dentro de la promise");
-                            singleGen._sequence = null;
-                            listDownloadedGenes.push(singleGen);
+                            listOfGenesToDownload[singleGenIndex]._sequence = null;
+                            listDownloadedGenes.push(listOfGenesToDownload[singleGenIndex]);
                             console.error(MessageConstants.DOWNLOAD_ERROR_MESSAGE);
                         }
                     }
                     resolve(listDownloadedGenes);
                 } catch (Exception) {
-                    //TODO quitar esto
-                    console.log("Salto en el catch de la BS fuera de la promise");
                     throw Exception;
                 }
             }
         );
+    }
+
+    private getNumberOfChunksOfListOfGenes(numberOfItemsInArray: number): number {
+        const desiredLengthOfChunck: number = 100;
+        let isChunkcNumberValid: boolean = false;
+        let temporalChunk: number = 1;
+        let finalChunk: number = null;
+        while (isChunkcNumberValid === false) {
+            if ((numberOfItemsInArray / temporalChunk) > desiredLengthOfChunck) {
+                temporalChunk++;
+            } else {
+                isChunkcNumberValid = true;
+                finalChunk = temporalChunk;
+            }
+        }
+        return finalChunk;
+    }
+
+    public insertGenesFromListOfObjects(listOfGenesToInsert: Array<GeneDTO>) {
+        try {
+            this._geneDAO.insertGenesFromListOfObjects(this._connectionReference, listOfGenesToInsert)
+
+        } catch (Exception) {
+            throw Exception;
+        }
     }
 }
