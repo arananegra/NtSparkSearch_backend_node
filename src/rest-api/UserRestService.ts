@@ -36,8 +36,8 @@ export class UserRestService {
 
 
                 let connection = await DbConnectionBS.getConnection(mongoDbDTO);
-                let gene_dao = new GeneDAO("testCollection");
-                let gene_bs = new GeneBS("testCollection", connection);
+                let gene_dao = new GeneDAO("testCollection2");
+                let gene_bs = new GeneBS("testCollection2", connection);
                 let lista_response;
 
                 // let gene_searcher = new GeneSearcher();
@@ -95,14 +95,14 @@ export class UserRestService {
                 // gene_list.push(gene_dto_3);
                 // //
 
-                let gene_list = await gene_dao.getListOfGenesFromXlrd("/home/alvaro-pc/Desktop/DEG.xlsx", 1);
+                let gene_list = await gene_dao.getListOfGenesFromXlrd("/home/alvaro-pc/DEG_test.xlsx", 1);
                 // let ncbiTest = gene_bs.downloadGeneObjectsFromListOfIdsThroughNcbi(gene_list).then((list_downloaded) => {
                 //     gene_bs.insertGenesFromListOfObjects(list_downloaded);
                 //     console.log("Insertadooooooosss")
                 // });
 
 
-                gene_bs.incrementalDownloadAndInsertionOfGenes(gene_list, 100).then(() => {
+                gene_bs.incrementalDownloadAndInsertionOfGenes(gene_list, 2).then(() => {
                     console.log("He hecho la inserción finalmente ");
                 })
                 console.log("El servicio no se queda pillado");

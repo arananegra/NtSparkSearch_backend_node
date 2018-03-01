@@ -116,30 +116,21 @@ export class GeneBS {
     }
 
     public async incrementalDownloadAndInsertionOfGenes(listOfGenesToDownload: Array<GeneDTO>, sizeOfChunk: number): Promise<void> {
+        return new Promise<void>(async (resolve, reject) => {
 
-        let incrementalArrayOfGenes: Array<GeneDTO> = null;
+            try {
+                let chunksArrayOfGenes = _.chunk(listOfGenesToDownload, sizeOfChunk);
 
-            return new Promise<void>(async (resolve, reject) => {
-
-                try {
-                    //incrementalArrayOfGenes = [];
-                    let chunksArrayOfGenes = _.chunk(listOfGenesToDownload, sizeOfChunk);
-
-                    for (let chunkedArrayOfGenes of chunksArrayOfGenes) {
-                        console.log("He hecho un chunk de ", chunkedArrayOfGenes.length);
-                        console.log("Voy a empezar a descargar ");
-                        console.log(JSON.stringify(chunkedArrayOfGenes, null, 2));
-                        let partialDownloadOfGenes = await this.downloadGeneObjectsFromListOfIdsThroughNcbi(chunkedArrayOfGenes);
-                        this.insertGenesFromListOfObjects(partialDownloadOfGenes);
-                    }
-                    //this.insertGenesFromListOfObjects(incrementalArrayOfGenes);
-                    resolve();
-                } catch (Exception) {
-                    reject(Exception);
+                for (let chunkedArrayOfGenes of chunksArrayOfGenes) {
+                    let partialDownloadOfGenes = await this.downloadGeneObjectsFromListOfIdsThroughNcbi(chunkedArrayOfGenes);
+                    this.insertGenesFromListOfObjects(partialDownloadOfGenes);
                 }
-            });
+                resolve();
+            } catch (Exception) {
+                reject(Exception);
+            }
+        });
     }
-
 
 
     public insertGenesFromListOfObjects(listOfGenesToInsert: Array<GeneDTO>) {
