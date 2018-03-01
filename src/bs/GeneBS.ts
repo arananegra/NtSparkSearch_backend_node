@@ -94,12 +94,10 @@ export class GeneBS {
                     listDownloadedGenes = new Array<GeneDTO>();
 
                     for (let singleGenIndex = 0; singleGenIndex < listOfGenesToDownload.length; singleGenIndex++) {
-
                         try {
                             let downloadedGene = await this._geneDAO.downloadGeneFromNcbi(listOfGenesToDownload[singleGenIndex]);
-
-                            listDownloadedGenes.push(downloadedGene);
                             console.log("Downloaded gen number " + singleGenIndex + " with id ", listOfGenesToDownload[singleGenIndex]._geneId);
+                            listDownloadedGenes.push(downloadedGene);
 
                         } catch (Exception) {
                             listOfGenesToDownload[singleGenIndex]._sequence = null;

@@ -6,6 +6,7 @@ import * as express from "express";
 import {GeneDAO} from "../dao/GeneDAO";
 import {GeneSearcher} from "../domain/GeneSearcher";
 import {GeneBS} from "../bs/GeneBS";
+let Nt = require('ntseq');
 
 export class UserRestService {
     private _app: express.Router;
@@ -37,7 +38,7 @@ export class UserRestService {
 
                 let connection = await DbConnectionBS.getConnection(mongoDbDTO);
                 let gene_dao = new GeneDAO("testCollection2");
-                let gene_bs = new GeneBS("testCollection2", connection);
+                let gene_bs = new GeneBS("testCollection3", connection);
                 let lista_response;
 
                 // let gene_searcher = new GeneSearcher();
@@ -95,20 +96,33 @@ export class UserRestService {
                 // gene_list.push(gene_dto_3);
                 // //
 
-                let gene_list = await gene_dao.getListOfGenesFromXlrd("/home/alvaro-pc/DEG_test.xlsx", 1);
-                // let ncbiTest = gene_bs.downloadGeneObjectsFromListOfIdsThroughNcbi(gene_list).then((list_downloaded) => {
-                //     gene_bs.insertGenesFromListOfObjects(list_downloaded);
-                //     console.log("Insertadooooooosss")
-                // });
+                let gene_list = await gene_dao.getListOfGenesFromXlrd("/home/alvaro-pc/DEG.xlsx", 1);
 
 
-                gene_bs.incrementalDownloadAndInsertionOfGenes(gene_list, 2).then(() => {
-                    console.log("He hecho la inserción finalmente ");
-                })
-                console.log("El servicio no se queda pillado");
+                // gene_bs.incrementalDownloadAndInsertionOfGenes(gene_list, 100).then(() => {
+                //     console.log("He hecho la inserción finalmente ");
+                // })
+                // console.log("El servicio no se queda pillado");
+                let fullListOfGenes = await gene_bs.getAllGenesAsListOfObjects();
+                console.log("He obtenido un total de ", fullListOfGenes.length + " de genes, iniciando busqueda")
+                let listOfArrayWithMatches = [];
+                console.time("ntseq");
+                for (let gene of fullListOfGenes) {
+                    if (gene._sequence !== null) {
+                        let seq = (new Nt.Seq()).read(gene._sequence);
+                        let querySeq = (new Nt.Seq()).read('NNNNNNANNANANANANANA');
 
+                        let map = seq.mapSequence(querySeq).initialize().sort();
+                        if (map.best().position !== -1) {
+                            listOfArrayWithMatches.push(gene)
+                        }
+                    }
+                }
+                console.timeEnd("ntseq");
 
-                res.status(202).send();
+                console.log("busqueda finalizada con un total de ", listOfArrayWithMatches.length);
+
+                res.status(200).send();
 
             } catch (Exception) {
                 console.log("Es un exceptionnnn del servicioo!!!!", Exception);

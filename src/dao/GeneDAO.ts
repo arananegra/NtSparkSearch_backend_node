@@ -191,7 +191,6 @@ export class GeneDAO {
         let fulFilledGeneObject = null;
         return new Promise<GeneDTO>(async (resolve, reject) => {
             try {
-                console.log("Voy a llamar a  getMetaInfoAboutGene del gen ", singleGene._geneId);
                 let metaInfoAboutGene = await this.getMetaInfoAboutGene(singleGene._geneId);
                 parseString(metaInfoAboutGene, async (err, result) => {
 
