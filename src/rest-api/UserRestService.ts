@@ -95,12 +95,16 @@ export class UserRestService {
                 // gene_list.push(gene_dto_3);
                 // //
 
-                let gene_list = await gene_dao.getListOfGenesFromXlrd("/home/alvaro-pc/Desktop/DEG.xlsx", 1);
-                let ncbiTest = gene_bs.downloadGeneObjectsFromListOfIdsThroughNcbi(gene_list).then((list_downloaded) => {
-                    gene_bs.insertGenesFromListOfObjects(list_downloaded);
-                    console.log("Insertadooooooosss")
-                });
+                let gene_list = await gene_dao.getListOfGenesFromXlrd("/home/alvaro-pc/DEG_test.xlsx", 1);
+                // let ncbiTest = gene_bs.downloadGeneObjectsFromListOfIdsThroughNcbi(gene_list).then((list_downloaded) => {
+                //     gene_bs.insertGenesFromListOfObjects(list_downloaded);
+                //     console.log("Insertadooooooosss")
+                // });
 
+
+                gene_bs.incrementalDownloadAndInsertionOfGenes(gene_list, 2).then(() => {
+                    console.log("He hecho la inserción finalmente ");
+                })
                 console.log("El servicio no se queda pillado");
 
 

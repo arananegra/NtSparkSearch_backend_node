@@ -4,8 +4,8 @@ import {GeneDAO} from "../dao/GeneDAO";
 import {MessageConstants} from "../constants/MessageConstants";
 import {Db} from "mongodb";
 import {GeneSearcher} from "../domain/GeneSearcher";
-import {DatabaseConstants} from "../constants/DatabaseConstants";
 import * as _ from "lodash";
+import {async, reject} from "q";
 
 export class GeneBS {
     private _collectionNameToConnect: string;
@@ -115,21 +115,34 @@ export class GeneBS {
         );
     }
 
-    private getNumberOfChunksOfListOfGenes(numberOfItemsInArray: number): number {
-        const desiredLengthOfChunck: number = 100;
-        let isChunkcNumberValid: boolean = false;
-        let temporalChunk: number = 1;
-        let finalChunk: number = null;
-        while (isChunkcNumberValid === false) {
-            if ((numberOfItemsInArray / temporalChunk) > desiredLengthOfChunck) {
-                temporalChunk++;
-            } else {
-                isChunkcNumberValid = true;
-                finalChunk = temporalChunk;
-            }
-        }
-        return finalChunk;
+    public async incrementalDownloadAndInsertionOfGenes(listOfGenesToDownload: Array<GeneDTO>, sizeOfChunk: number): Promise<void> {
+
+        let incrementalArrayOfGenes: Array<GeneDTO> = null;
+
+            return new Promise<void>(async (resolve, reject) => {
+
+                try {
+                    incrementalArrayOfGenes = [];
+                    let chunksArrayOfGenes = _.chunk(listOfGenesToDownload, sizeOfChunk);
+
+                    for (let chunkedArrayOfGenes of chunksArrayOfGenes) {
+                        console.log("He hecho un chunk de ", chunkedArrayOfGenes.length);
+                        console.log("Voy a empezar a descargar ");
+                        console.log(chunkedArrayOfGenes, null, 2);
+                        let partialDownloadOfGenes = await this.downloadGeneObjectsFromListOfIdsThroughNcbi(chunkedArrayOfGenes);
+                        incrementalArrayOfGenes = _.concat(incrementalArrayOfGenes, partialDownloadOfGenes);
+                    }
+                    console.log("Insertados un total de ", incrementalArrayOfGenes.length);
+                    console.log("Son ", incrementalArrayOfGenes);
+                    this.insertGenesFromListOfObjects(incrementalArrayOfGenes);
+                    resolve();
+                } catch (Exception) {
+                    reject(Exception);
+                }
+            });
     }
+
+
 
     public insertGenesFromListOfObjects(listOfGenesToInsert: Array<GeneDTO>) {
         try {
