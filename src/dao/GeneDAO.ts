@@ -191,30 +191,46 @@ export class GeneDAO {
         let fulFilledGeneObject = null;
         return new Promise<GeneDTO>(async (resolve, reject) => {
             try {
+                console.log("Voy a llamar a  getMetaInfoAboutGene");
                 let metaInfoAboutGene = await this.getMetaInfoAboutGene(singleGene._geneId);
+                console.log("He llamado a getMetaInfoAboutGene y he obtenido ", JSON.stringify(metaInfoAboutGene, null, 2));
                 parseString(metaInfoAboutGene, async (err, result) => {
-                    let geneRegion = result['Entrezgene-Set']["Entrezgene"][0]["Entrezgene_locus"][0]["Gene-commentary"][0]
-                        ["Gene-commentary_seqs"][0]["Seq-loc"][0]['Seq-loc_int'][0]['Seq-interval'];
-                    let startPos = Number(geneRegion[0]["Seq-interval_from"][0]) + 1;
-                    let endPost = Number(geneRegion[0]["Seq-interval_to"][0]) + 1;
+                    console.log("ERRORRRRR?!!!!!!!", JSON.stringify(err, null, 2));
+                    if (err) {
+                        console.error("HE EXPLOTADO AL PARSEAR EL GEN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! en el método de downloadGeneFromNcbi")
+                        reject(err)
+                    } else {
+                        let geneRegion = result['Entrezgene-Set']["Entrezgene"][0]["Entrezgene_locus"][0]["Gene-commentary"][0]
+                            ["Gene-commentary_seqs"][0]["Seq-loc"][0]['Seq-loc_int'][0]['Seq-interval'];
+                        let startPos = Number(geneRegion[0]["Seq-interval_from"][0]) + 1;
+                        let endPost = Number(geneRegion[0]["Seq-interval_to"][0]) + 1;
 
-                    let intervalId = geneRegion[0]["Seq-interval_id"][0]["Seq-id"][0]["Seq-id_gi"][0];
+                        let intervalId = geneRegion[0]["Seq-interval_id"][0]["Seq-id"][0]["Seq-id_gi"][0];
 
-                    let strandSense = geneRegion[0]["Seq-interval_strand"][0]["Na-strand"][0]["$"]["value"];
-                    strandSense === "minus" ? strandSense = 2 : strandSense = 1;
+                        let strandSense = geneRegion[0]["Seq-interval_strand"][0]["Na-strand"][0]["$"]["value"];
+                        strandSense === "minus" ? strandSense = 2 : strandSense = 1;
 
-                    let fastaResponse = await this.getFastaFromGene(intervalId, startPos, endPost, strandSense);
-                    let fastaResponseWithoutHeader = fastaResponse.substring(fastaResponse.indexOf("\n") + 1);
-                    let fastaSingleLine = fastaResponseWithoutHeader.replace(/[\n]/g, "");
+                        try {
+                            console.log("VOY A LLAMAR A getFastaFromGene");
+                            let fastaResponse = await this.getFastaFromGene(intervalId, startPos, endPost, strandSense);
+                            let fastaResponseWithoutHeader = fastaResponse.substring(fastaResponse.indexOf("\n") + 1);
+                            let fastaSingleLine = fastaResponseWithoutHeader.replace(/[\n]/g, "");
 
-                    let singleFulFilledGene = new GeneDTO();
-                    singleFulFilledGene._geneId = singleGene._geneId;
-                    singleFulFilledGene._sequence = fastaSingleLine;
-                    fulFilledGeneObject = singleFulFilledGene;
-                    resolve(fulFilledGeneObject);
+                            let singleFulFilledGene = new GeneDTO();
+                            singleFulFilledGene._geneId = singleGene._geneId;
+                            singleFulFilledGene._sequence = fastaSingleLine;
+                            fulFilledGeneObject = singleFulFilledGene;
+                            resolve(fulFilledGeneObject);
+                        } catch (e) {
+                            console.log("HE EXPLOTADO DENTRO DE LA LLAMADA DE getFastaFromGene")
+                            reject(e)
+                        }
+                    }
+
                 });
-            } catch (ex) {
-                reject(ex);
+            } catch (Exception) {
+                console.log("ACABO DE EXPLOTAR DENTRO DE downloadGeneFromNcbi")
+                reject(Exception);
             }
 
         });
@@ -226,6 +242,7 @@ export class GeneDAO {
             .then(response => {
                 return response.data;
             }).catch(Exception => {
+                console.error("HE EXPLOTADO AL PARSEAR EL GEN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! en el método getMetaInfoAboutGene", geneId)
                 throw Exception;
             });
     }
@@ -237,6 +254,7 @@ export class GeneDAO {
             .then(response => {
                 return response.data;
             }).catch(Exception => {
+                console.error("HE EXPLOTADO AL PARSEAR EL GEN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! en el método getFastaFromGene");
                 throw Exception;
             });
     }

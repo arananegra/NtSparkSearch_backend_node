@@ -122,19 +122,17 @@ export class GeneBS {
             return new Promise<void>(async (resolve, reject) => {
 
                 try {
-                    incrementalArrayOfGenes = [];
+                    //incrementalArrayOfGenes = [];
                     let chunksArrayOfGenes = _.chunk(listOfGenesToDownload, sizeOfChunk);
 
                     for (let chunkedArrayOfGenes of chunksArrayOfGenes) {
                         console.log("He hecho un chunk de ", chunkedArrayOfGenes.length);
                         console.log("Voy a empezar a descargar ");
-                        console.log(chunkedArrayOfGenes, null, 2);
+                        console.log(JSON.stringify(chunkedArrayOfGenes, null, 2));
                         let partialDownloadOfGenes = await this.downloadGeneObjectsFromListOfIdsThroughNcbi(chunkedArrayOfGenes);
-                        incrementalArrayOfGenes = _.concat(incrementalArrayOfGenes, partialDownloadOfGenes);
+                        this.insertGenesFromListOfObjects(partialDownloadOfGenes);
                     }
-                    console.log("Insertados un total de ", incrementalArrayOfGenes.length);
-                    console.log("Son ", incrementalArrayOfGenes);
-                    this.insertGenesFromListOfObjects(incrementalArrayOfGenes);
+                    //this.insertGenesFromListOfObjects(incrementalArrayOfGenes);
                     resolve();
                 } catch (Exception) {
                     reject(Exception);
