@@ -9,7 +9,10 @@
     "build": "npm install && ./node_modules/webpack/bin/webpack.js --env=pro-compilation",
     "build:dev": "npm install && ./node_modules/webpack/bin/webpack.js --env=pre-compilation",
     "start:dev": "./node_modules/webpack/bin/webpack.js --watch --env=pre-compilation",
-    "start:watch-server": "cd dist/ && ../node_modules/nodemon/bin/nodemon.js ntsparksearch_backend.js"
+    "start:watch-server": "cd dist/ && ../node_modules/nodemon/bin/nodemon.js ntsparksearch_backend.js",
+    "start:prod-cluster": "cd dist/ && ../node_modules/pm2/bin/pm2 start ntsparksearch_backend.js -i 0",
+    "start:monitor-cluster": "cd dist/ && ../node_modules/pm2/bin/pm2 monit",
+    "stop:prod-cluster": "cd dist/ && ../node_modules/pm2/bin/pm2 stop all && ../node_modules/pm2/bin/pm2 delete all"
   },
   "repository": {
     "type": "git",
@@ -32,7 +35,8 @@
     "q": "^1.5.1",
     "reflect-metadata": "^0.1.10",
     "xlsx": "^0.11.10",
-    "xml2js": "^0.4.19"
+    "xml2js": "^0.4.19",
+    "pm2": "^2.10.1"
   },
   "devDependencies": {
     "@types/body-parser": "^1.16.8",

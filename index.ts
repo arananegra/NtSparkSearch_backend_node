@@ -2,8 +2,6 @@
 import "reflect-metadata";
 import * as express from "express";
 import * as bodyParser from "body-parser";
-import * as cluster from 'cluster';
-import {cpus} from 'os';
 //Own files imports
 import {MainServices} from "./src/rest-api/MainServices";
 
