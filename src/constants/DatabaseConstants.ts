@@ -6,4 +6,5 @@ export class DatabaseConstants {
     public static FILTERED_COLLECTION_NAME = "filteredGenes";
 
     public static GENE_ID_FIELD_NAME = "_geneId";
+    public static USERNAME_FIELD_NAME = "_username";
 }

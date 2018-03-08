@@ -36,9 +36,11 @@
     "reflect-metadata": "^0.1.10",
     "xlsx": "^0.11.10",
     "xml2js": "^0.4.19",
-    "pm2": "^2.10.1"
+    "pm2": "^2.10.1",
+    "bcrypt": "^1.0.3"
   },
   "devDependencies": {
+    "@types/bcrypt": "^1.0.0",
     "@types/body-parser": "^1.16.8",
     "@types/chai": "^4.0.5",
     "@types/core-js": "^0.9.42",
