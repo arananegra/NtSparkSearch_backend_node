@@ -1,11 +1,13 @@
-import {GraphQLNonNull, GraphQLObjectType, GraphQLString} from "graphql";
+import {GraphQLBoolean, GraphQLID, GraphQLNonNull, GraphQLObjectType, GraphQLString} from "graphql";
 
 
 export const GeneType = new GraphQLObjectType({
-    name: "Gene",
+    name: "gene",
     description: "This represent a gene object",
     fields: () => ({
-        _geneId: {type: new GraphQLNonNull(GraphQLString)},
-        _sequence: {type: new GraphQLNonNull(GraphQLString)}
+        id: {type: new GraphQLNonNull(GraphQLID)},
+        geneId: {type: new GraphQLNonNull(GraphQLString)},
+        sequence: {type: GraphQLString},
+        hasSequence: {type: GraphQLBoolean}
     })
 });
