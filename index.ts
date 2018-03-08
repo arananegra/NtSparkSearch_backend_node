@@ -6,6 +6,8 @@ import * as bodyParser from "body-parser";
 import {MainServices} from "./src/rest-api/MainServices";
 import {graphqlExpress, graphiqlExpress} from "apollo-server-express"
 import {makeExecutableSchema} from "graphql-tools";
+import {MongoDBConfigurationDTO} from "./src/domain/MongoDBConfigurationDTO";
+import {DbConnectionBS} from "./src/bs/DbConnectionBS";
 
 //Global variables declaration
 let app: express.Application = express();
@@ -37,11 +39,11 @@ const typeDefs = `
 
 // The resolvers
 const resolvers = {
-    Query: { books: () => books },
+    Query: {books: () => books},
 };
 
 // Put together a schema
-const schema = makeExecutableSchema({
+const graphQLSchema = makeExecutableSchema({
     typeDefs,
     resolvers,
 });
@@ -59,10 +61,32 @@ app.use(function (req: express.Request, res: express.Response, next: express.Nex
 app.use('/api', router);
 
 // The GraphQL endpoint
-app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
+app.use('/graphql',
+    bodyParser.json(),
+    graphqlExpress(async req => {
+
+        let mongoDbDTO: MongoDBConfigurationDTO = new MongoDBConfigurationDTO();
+        mongoDbDTO.clientReference = "localhost";
+        mongoDbDTO.port = "27017";
+        mongoDbDTO.databaseName = "testDB";
+
+        //TODO sustituir por variables de entorno en produccion
+
+        let connection = await DbConnectionBS.getConnection(mongoDbDTO);
+
+        return {
+            schema: graphQLSchema,
+            context: {
+                databaseConnection: connection,
+            },
+            // other options here
+            debug: true
+        };
+    })
+);
 
 // GraphiQL, a visual editor for queries
-app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
+app.use('/graphiql', graphiqlExpress({endpointURL: '/graphql'}));
 
 //Server configuration
 let server = app.listen(3000, () => {
