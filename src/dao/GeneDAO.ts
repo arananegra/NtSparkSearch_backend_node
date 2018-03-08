@@ -3,7 +3,6 @@ import {Collection, Db} from "mongodb";
 import {GeneDTO} from "../domain/GeneDTO";
 import {CollectionIndexCreator} from "./CollectionIndexCreator";
 import {DatabaseConstants} from "../constants/DatabaseConstants";
-import * as Q from "q";
 import * as XLSX from "xlsx";
 import * as _ from "lodash";
 import * as fasta from "bionode-fasta"
@@ -130,22 +129,24 @@ export class GeneDAO {
         }
     }
 
-    public getListOfGenesFromFasta(filePath: string): Q.IPromise<Array<GeneDTO>> {
-        let deferred: Q.Deferred<Array<GeneDTO>>;
-        deferred = Q.defer<Array<GeneDTO>>();
+    public getListOfGenesFromFasta(filePath: string): Promise<Array<GeneDTO>> {
         let geneDtoList: Array<GeneDTO> = [];
         try {
+            return new Promise<Array<GeneDTO>>((resolve, reject) => {
+                try {
+                    fasta({objectMode: true}, filePath)
+                        .on('data', (singleRowFromFasta) => {
+                            let singleGeneDto: GeneDTO = new GeneDTO();
+                            singleGeneDto._geneId = singleRowFromFasta.id;
+                            singleGeneDto._sequence = singleRowFromFasta.seq;
+                            geneDtoList.push(singleGeneDto);
+                            resolve(geneDtoList);
+                        });
+                } catch (InnerException) {
+                    reject(InnerException)
+                }
+            })
 
-            fasta({objectMode: true}, filePath)
-                .on('data', (singleRowFromFasta) => {
-                    let singleGeneDto: GeneDTO = new GeneDTO();
-                    singleGeneDto._geneId = singleRowFromFasta.id;
-                    singleGeneDto._sequence = singleRowFromFasta.seq;
-                    geneDtoList.push(singleGeneDto);
-                    deferred.resolve(geneDtoList);
-                });
-
-            return deferred.promise;
         } catch (Exception) {
             throw Exception;
         }
@@ -163,9 +164,6 @@ export class GeneDAO {
     public insertGenesFromListOfObjects(connectionReference: Db, genesToInsert: Array<GeneDTO>) {
         try {
             connectionReference.collection(this._collectionNameToConnect).insertMany(genesToInsert);
-            // genesToInsert.map((geneToInsert) => {
-            //     this.insertGeneObject(connectionReference, geneToInsert);
-            // });
 
         } catch (Exception) {
             throw Exception;
