@@ -63,8 +63,8 @@ export class UserRestService {
                 // let allGenes = await gene_bs.getAllGenesAsListOfObjects();
                 // console.log(allGenes);
 
-                //let thing = await gene_dao.getListOfGenesFromFasta("/Users/alvarogomez/testing_files/test.fasta");
-                //console.log("LO QUE OBTENGO DEL fasta,", thing);
+                let thing = await gene_bs.getListOfGenesFromFasta("/home/alvaro-pc/test.fasta");
+                console.log("LO QUE OBTENGO DEL fasta,", thing);
 
                 //console.log("LA RESPUESTA FINAL", lista_response);
 
@@ -96,31 +96,31 @@ export class UserRestService {
                 // gene_list.push(gene_dto_3);
                 // //
 
-                let gene_list = await gene_dao.getListOfGenesFromXlrd("/home/alvaro-pc/DEG.xlsx", 1);
-
-
-                // gene_bs.incrementalDownloadAndInsertionOfGenes(gene_list, 100).then(() => {
-                //     console.log("He hecho la inserción finalmente ");
-                // })
-                // console.log("El servicio no se queda pillado");
-                let fullListOfGenes = await gene_bs.getAllGenesAsListOfObjects();
-                console.log("He obtenido un total de ", fullListOfGenes.length + " de genes, iniciando busqueda")
-                let listOfArrayWithMatches = [];
-                console.time("ntseq");
-                for (let gene of fullListOfGenes) {
-                    if (gene._sequence !== null) {
-                        let seq = (new Nt.Seq()).read(gene._sequence);
-                        let querySeq = (new Nt.Seq()).read('NNNNNNANNANANANANANA');
-
-                        let map = seq.mapSequence(querySeq).initialize().sort();
-                        if (map.best().position !== -1) {
-                            listOfArrayWithMatches.push(gene)
-                        }
-                    }
-                }
-                console.timeEnd("ntseq");
-
-                console.log("busqueda finalizada con un total de ", listOfArrayWithMatches.length);
+                // let gene_list = await gene_dao.getListOfGenesFromXlrd("/home/alvaro-pc/DEG.xlsx", 1);
+                //
+                //
+                // // gene_bs.incrementalDownloadAndInsertionOfGenes(gene_list, 100).then(() => {
+                // //     console.log("He hecho la inserción finalmente ");
+                // // })
+                // // console.log("El servicio no se queda pillado");
+                // let fullListOfGenes = await gene_bs.getAllGenesAsListOfObjects();
+                // console.log("He obtenido un total de ", fullListOfGenes.length + " de genes, iniciando busqueda")
+                // let listOfArrayWithMatches = [];
+                // console.time("ntseq");
+                // for (let gene of fullListOfGenes) {
+                //     if (gene._sequence !== null) {
+                //         let seq = (new Nt.Seq()).read(gene._sequence);
+                //         let querySeq = (new Nt.Seq()).read('NNNNNNANNANANANANANA');
+                //
+                //         let map = seq.mapSequence(querySeq).initialize().sort();
+                //         if (map.best().position !== -1) {
+                //             listOfArrayWithMatches.push(gene)
+                //         }
+                //     }
+                // }
+                // console.timeEnd("ntseq");
+                //
+                // console.log("busqueda finalizada con un total de ", listOfArrayWithMatches.length);
 
                 res.status(200).send();
 

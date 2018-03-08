@@ -110,8 +110,7 @@ export class GeneDAO {
     }
 
     public getListOfGenesFromXlrd(filePath: string, sheetNumber: number): Array<GeneDTO> {
-        let listOfGeneDTOs: Array<GeneDTO>;
-        listOfGeneDTOs = new Array<GeneDTO>();
+        let listOfGeneDTOs: Array<GeneDTO> = new Array<GeneDTO>();
         try {
             let workbook = XLSX.readFile(filePath);
 
@@ -172,7 +171,6 @@ export class GeneDAO {
 
     public insertGeneDocumentFromNonObjectDict(connectionReference: Db, genesMapToInsert: Map<string, string>) {
         try {
-            let list = genesMapToInsert.entries();
             genesMapToInsert.forEach((value: string, key: string) => {
                 let geneDTO = new GeneDTO();
                 geneDTO._geneId = key;
