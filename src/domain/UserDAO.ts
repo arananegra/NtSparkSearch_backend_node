@@ -13,7 +13,7 @@ export class UserDAO {
         this._collectionNameToConnect = collectionNameToConnect;
     }
 
-    public checkIfUserExists(connectionReference: Db, userSearcher: UserSearcher): Promise<UserDTO> {
+    private checkIfUserExists(connectionReference: Db, userSearcher: UserSearcher): Promise<UserDTO> {
         let collectionFromConnectionReference: Collection = null;
         let userDTOfound: UserDTO = null;
 
@@ -94,5 +94,4 @@ export class UserDAO {
             throw Exception;
         }
     }
-
 }
