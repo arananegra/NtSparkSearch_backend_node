@@ -6,6 +6,8 @@ import * as express from "express";
 import {GeneDAO} from "../dao/GeneDAO";
 import {GeneSearcher} from "../domain/GeneSearcher";
 import {GeneBS} from "../bs/GeneBS";
+import {UserDTO} from "../domain/UserDTO";
+import {UserBS} from "../bs/UserBS"
 let Nt = require('ntseq');
 
 export class UserRestService {
@@ -18,6 +20,34 @@ export class UserRestService {
 
     public initializeUserServiceRoutes() {
         this.searchUserById();
+        this.registerUser();
+    }
+
+    private async registerUser() {
+        this._app.post("/register", async function (req: express.Request, res: express.Response) {
+            try {
+
+                let mongoDbDTO: MongoDBConfigurationDTO = new MongoDBConfigurationDTO();
+                mongoDbDTO.clientReference = "localhost";
+                mongoDbDTO.port = "27017";
+                mongoDbDTO.databaseName = "testDB";
+
+                let connection = await DbConnectionBS.getConnection(mongoDbDTO);
+
+                let userToRegister = new UserDTO();
+                userToRegister._username = req.body.username;
+                userToRegister._password = req.body.password;
+
+                let userBS = new UserBS("users", connection);
+
+
+
+
+            } catch (Exception) {
+                console.log("Es un exceptionnnn del servicioo!!!!", Exception);
+                res.status(500).send(Exception);
+            }
+        });
     }
 
     private async searchUserById() {

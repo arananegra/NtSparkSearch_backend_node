@@ -65,6 +65,8 @@ export class UserDAO {
                             resolve()
                         }
                     });
+                } else {
+                    resolve(null);
                 }
             })
         } catch (Exception) {

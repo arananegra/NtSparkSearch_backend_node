@@ -2,6 +2,7 @@
 import "reflect-metadata";
 import * as express from "express";
 import * as bodyParser from "body-parser";
+import * as jwt from "express-jwt"
 //Own files imports
 import {MainServices} from "./src/rest-api/MainServices";
 
@@ -23,6 +24,21 @@ app.use(function (req: express.Request, res: express.Response, next: express.Nex
     res.header("Access-Control-Allow-Methods", "*");
     res.header("Access-Control-Allow-Headers", "*");
     next();
+});
+
+// JWT Security middleware
+let jwtCheck = jwt({
+    secret: "mySecret",
+    requestProperty: 'token'
+});
+
+// Enable the use of the jwtCheck middleware in all of our routes
+app.use(jwtCheck);
+
+app.use(function(err, req, res, next) {
+    if (err.constructor.name === 'UnauthorizedError') {
+        res.status(401).send('Invalid token...');
+    }
 });
 
 //Url context before services name
