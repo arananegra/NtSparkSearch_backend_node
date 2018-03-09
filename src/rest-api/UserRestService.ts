@@ -8,8 +8,11 @@ import {GeneSearcher} from "../domain/GeneSearcher";
 import {GeneBS} from "../bs/GeneBS";
 import {UserDTO} from "../domain/UserDTO";
 import {UserBS} from "../bs/UserBS"
+
 let Nt = require('ntseq');
 import * as jsonwebtoken from "jsonwebtoken"
+import {ServicesConstants} from "../constants/ServicesConstants";
+
 export class UserRestService {
     private _app: express.Router;
 
@@ -21,10 +24,11 @@ export class UserRestService {
     public initializeUserServiceRoutes() {
         this.searchUserById();
         this.registerUser();
+        this.loginUser();
     }
 
     private async registerUser() {
-        this._app.post("/register", async function (req: express.Request, res: express.Response) {
+        this._app.post(ServicesRouteConstants.REGISTER_SERVICE, async function (req: express.Request, res: express.Response) {
             try {
 
                 let mongoDbDTO: MongoDBConfigurationDTO = new MongoDBConfigurationDTO();
@@ -47,14 +51,49 @@ export class UserRestService {
                             expiresIn: '30s'
                         }
                     );
-                    res.header("token", token);
-                    res.status(200).send();
+                    res.header(ServicesConstants.TOKEN_HEADER_NAME, token);
+                    res.status(201).send();
                 } else {
                     res.status(409).send("User already exists");
                 }
-
             } catch (Exception) {
-                console.log("Es un exceptionnnn del servicioo!!!!", Exception);
+                console.log("---------------- EXCEPTION ON REGISTER SERVICE ---------------- \n\n", Exception);
+                res.status(500).send(Exception);
+            }
+        });
+    }
+
+    private async loginUser() {
+        this._app.post(ServicesRouteConstants.LOGIN_SERVICE, async function (req: express.Request, res: express.Response) {
+            try {
+
+                let mongoDbDTO: MongoDBConfigurationDTO = new MongoDBConfigurationDTO();
+                mongoDbDTO.clientReference = "localhost";
+                mongoDbDTO.port = "27017";
+                mongoDbDTO.databaseName = "testDB";
+
+                let connection = await DbConnectionBS.getConnection(mongoDbDTO);
+
+                let userToLogin = new UserDTO();
+                userToLogin._username = req.body.username;
+                userToLogin._password = req.body.password;
+
+                let userBS = new UserBS("users", connection);
+
+                let resultOfLoginUser : UserDTO = await userBS.loginUser(userToLogin);
+
+                if (resultOfLoginUser !== null) {
+                    let token = jsonwebtoken.sign({"data": userToLogin._password}, 'mySecret', {
+                            expiresIn: '30s'
+                        }
+                    );
+                    res.header(ServicesConstants.TOKEN_HEADER_NAME, token);
+                    res.status(200).send();
+                } else {
+                    res.status(401).send("Wrong credentials provided");
+                }
+            } catch (Exception) {
+                console.log("---------------- EXCEPTION ON LOGIN SERVICE ---------------- \n\n", Exception);
                 res.status(500).send(Exception);
             }
         });
@@ -103,8 +142,8 @@ export class UserRestService {
                 // let allGenes = await gene_bs.getAllGenesAsListOfObjects();
                 // console.log(allGenes);
 
-                let thing = await gene_bs.getListOfGenesFromFasta("/home/alvaro-pc/test.fasta");
-                console.log("LO QUE OBTENGO DEL fasta,", thing);
+                // let thing = await gene_bs.getListOfGenesFromFasta("/home/alvaro-pc/test.fasta");
+                // console.log("LO QUE OBTENGO DEL fasta,", thing);
 
                 //console.log("LA RESPUESTA FINAL", lista_response);
 
@@ -162,7 +201,7 @@ export class UserRestService {
                 //
                 // console.log("busqueda finalizada con un total de ", listOfArrayWithMatches.length);
 
-                res.status(200).send();
+                res.status(200).send(gene_dto);
 
             } catch (Exception) {
                 console.log("Es un exceptionnnn del servicioo!!!!", Exception);

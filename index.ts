@@ -5,6 +5,7 @@ import * as bodyParser from "body-parser";
 import * as jwt from "express-jwt"
 //Own files imports
 import {MainServices} from "./src/rest-api/MainServices";
+import {ServicesRouteConstants} from "./src/constants/ServicesRouteConstants";
 
 
 //Global variables declaration
@@ -15,8 +16,6 @@ let router: express.Router = express.Router();
 
 //Handle Json Body
 app.use(bodyParser.json());
-
-// Logs directory
 
 //Enable CORS
 app.use(function (req: express.Request, res: express.Response, next: express.NextFunction) {
@@ -30,17 +29,19 @@ app.use(function (req: express.Request, res: express.Response, next: express.Nex
 let jwtCheck = jwt({
     secret: "mySecret",
     getToken: (req)  => {
-        //console.log("El TOKEN ES ", req.headers.token);
         if (req.headers.token) {
             return req.headers.token;
         } else {
             return null;
         }
     }
-}).unless({path: ['/api/register', '/api/login']});
+}).unless({path: [ServicesRouteConstants.BASE_API + ServicesRouteConstants.REGISTER_SERVICE,
+        ServicesRouteConstants.BASE_API + ServicesRouteConstants.LOGIN_SERVICE]});
 
 // Enable the use of the jwtCheck middleware in all of our routes
 app.use(jwtCheck);
+
+// Function fallback for Auth errors
 
 app.use(function (err, req, res, next) {
     if (err.constructor.name === 'UnauthorizedError') {
@@ -49,7 +50,7 @@ app.use(function (err, req, res, next) {
 });
 
 //Url context before services name
-app.use('/api', router);
+app.use(ServicesRouteConstants.BASE_API, router);
 
 //Server configuration
 let server = app.listen(3000, () => {
