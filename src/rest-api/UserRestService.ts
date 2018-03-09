@@ -43,11 +43,14 @@ export class UserRestService {
                 let resultOfRegisterUser = await userBS.registerNewUser(userToRegister);
 
                 if (resultOfRegisterUser !== null) {
-                    let token = jsonwebtoken.sign(userToRegister._password, 'mySecret');
+                    let token = jsonwebtoken.sign({"data": userToRegister._password}, 'mySecret', {
+                            expiresIn: '30s'
+                        }
+                    );
                     res.header("token", token);
                     res.status(200).send();
                 } else {
-                    res.status(401).send("El usuario existe");
+                    res.status(409).send("User already exists");
                 }
 
             } catch (Exception) {

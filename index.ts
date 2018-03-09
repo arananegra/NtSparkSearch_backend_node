@@ -29,15 +29,13 @@ app.use(function (req: express.Request, res: express.Response, next: express.Nex
 // JWT Security middleware
 let jwtCheck = jwt({
     secret: "mySecret",
-    requestProperty: 'token',
-    getToken: function fromHeaderOrQuerystring(req) {
-        console.log("El TOKEN ES ", req.headers.token);
+    getToken: (req)  => {
+        //console.log("El TOKEN ES ", req.headers.token);
         if (req.headers.token) {
             return req.headers.token;
         } else {
             return null;
         }
-
     }
 }).unless({path: ['/api/register', '/api/login']});
 
