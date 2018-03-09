@@ -40,6 +40,7 @@ export class UserRestService {
 
                 let userToRegister = new UserDTO();
                 userToRegister._username = req.body.username;
+                userToRegister._email = req.body.email;
                 userToRegister._password = req.body.password;
 
                 let userBS = new UserBS("users", connection);
@@ -76,6 +77,7 @@ export class UserRestService {
 
                 let userToLogin = new UserDTO();
                 userToLogin._username = req.body.username;
+                userToLogin._email = req.body.email;
                 userToLogin._password = req.body.password;
 
                 let userBS = new UserBS("users", connection);
