@@ -27,21 +27,15 @@ export class UserDAO {
                 mongodbFindUserByUsernameCriteria = userSearcher.username_criteria;
             }
 
-            else if (userSearcher.email_criteria !== null) {
+            if (userSearcher.email_criteria !== null) {
                 mongodbFindUserByEmailCriteria = userSearcher.email_criteria;
             }
-
-            //CollectionIndexCreator.createCompoundIndex(collectionFromConnectionReference, [DatabaseConstants.USERNAME_FIELD_NAME, DatabaseConstants.EMAIL_FIELD_NAME]);
-            collectionFromConnectionReference.createIndex({
-                [DatabaseConstants.USERNAME_FIELD_NAME]: "text",
-                [DatabaseConstants.EMAIL_FIELD_NAME]: "text"
-            });
 
             return new Promise<UserDTO>((resolve, reject) => {
                 collectionFromConnectionReference.find({
                     $or: [
-                        {[DatabaseConstants.EMAIL_FIELD_NAME]: userSearcher.email_criteria},
-                        {[DatabaseConstants.USERNAME_FIELD_NAME]: userSearcher.username_criteria}
+                        {[DatabaseConstants.EMAIL_FIELD_NAME]: mongodbFindUserByEmailCriteria},
+                        {[DatabaseConstants.USERNAME_FIELD_NAME]: mongodbFindUserByUsernameCriteria}
                     ]
                 })
                     .toArray((err, docs) => {
