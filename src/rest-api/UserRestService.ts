@@ -9,7 +9,7 @@ import {GeneBS} from "../bs/GeneBS";
 import {UserDTO} from "../domain/UserDTO";
 import {UserBS} from "../bs/UserBS"
 let Nt = require('ntseq');
-
+import * as jsonwebtoken from "jsonwebtoken"
 export class UserRestService {
     private _app: express.Router;
 
@@ -40,8 +40,15 @@ export class UserRestService {
 
                 let userBS = new UserBS("users", connection);
 
+                let resultOfRegisterUser = await userBS.registerNewUser(userToRegister);
 
-
+                if (resultOfRegisterUser !== null) {
+                    let token = jsonwebtoken.sign(userToRegister._password, 'mySecret');
+                    res.header("token", token);
+                    res.status(200).send();
+                } else {
+                    res.status(401).send("El usuario existe");
+                }
 
             } catch (Exception) {
                 console.log("Es un exceptionnnn del servicioo!!!!", Exception);

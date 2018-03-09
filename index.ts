@@ -29,15 +29,24 @@ app.use(function (req: express.Request, res: express.Response, next: express.Nex
 // JWT Security middleware
 let jwtCheck = jwt({
     secret: "mySecret",
-    requestProperty: 'token'
-});
+    requestProperty: 'token',
+    getToken: function fromHeaderOrQuerystring(req) {
+        console.log("El TOKEN ES ", req.headers.token);
+        if (req.headers.token) {
+            return req.headers.token;
+        } else {
+            return null;
+        }
+
+    }
+}).unless({path: ['/api/register', '/api/login']});
 
 // Enable the use of the jwtCheck middleware in all of our routes
 app.use(jwtCheck);
 
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
     if (err.constructor.name === 'UnauthorizedError') {
-        res.status(401).send('Invalid token...');
+        res.status(401).send(err);
     }
 });
 
