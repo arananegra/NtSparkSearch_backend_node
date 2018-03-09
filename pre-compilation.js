@@ -39,13 +39,8 @@ let basePath = __dirname;
                     test: /\.(ts|tsx)$/,
                     exclude: /node_modules/,
                     use: [{
-                        loader: 'awesome-typescript-loader',
+                        loader: 'awesome-typescript-loader'
                     }]
-                },
-                {
-                    test: /\.(js)$/,
-                    exclude: /node_modules|\.spec\.js$/,
-                    loader: 'babel-loader'
                 },
                 {
                     test: /\.json$/,

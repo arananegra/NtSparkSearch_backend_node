@@ -1,6 +1,5 @@
 import {hash, compare} from "bcrypt"
 import {Collection, Db} from "mongodb";
-import {GeneDTO} from "./GeneDTO";
 import {UserDTO} from "./UserDTO";
 import {CollectionIndexCreator} from "../dao/CollectionIndexCreator";
 import {DatabaseConstants} from "../constants/DatabaseConstants";
