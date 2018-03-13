@@ -3378,6 +3378,15 @@ jws@^3.1.4:
     jwa "^1.1.4"
     safe-buffer "^5.0.1"
 
+jwt-node-helper@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/jwt-node-helper/-/jwt-node-helper-1.0.2.tgz#7792ae4b3690956a3e079debe43db76dd3b5e8bb"
+  dependencies:
+    bcrypt "^1.0.3"
+    core-js "^2.4.1"
+    json-object-mapper "^1.5.1"
+    mongodb "^2.2.33"
+
 jxLoader@*:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/jxLoader/-/jxLoader-0.1.1.tgz#0134ea5144e533b594fc1ff25ff194e235c53ecd"

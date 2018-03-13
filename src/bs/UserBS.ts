@@ -1,5 +1,5 @@
 import {Db} from "mongodb";
-import {UserDAO} from "../domain/UserDAO";
+import {UserDAO} from "../dao/UserDAO";
 import {UserDTO} from "../domain/UserDTO";
 
 export class UserBS {

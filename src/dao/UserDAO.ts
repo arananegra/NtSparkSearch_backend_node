@@ -1,9 +1,8 @@
 import {hash, compare} from "bcrypt"
 import {Collection, Db} from "mongodb";
-import {UserDTO} from "./UserDTO";
-import {CollectionIndexCreator} from "../dao/CollectionIndexCreator";
+import {UserDTO} from "../domain/UserDTO";
 import {DatabaseConstants} from "../constants/DatabaseConstants";
-import {UserSearcher} from "./UserSearcher";
+import {UserSearcher} from "../domain/UserSearcher";
 
 export class UserDAO {
     private _collectionNameToConnect: string;

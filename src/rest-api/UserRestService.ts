@@ -4,14 +4,14 @@ import {DbConnectionBS} from "../bs/DbConnectionBS";
 import {MongoDBConfigurationDTO} from "../domain/MongoDBConfigurationDTO";
 import * as express from "express";
 import {GeneDAO} from "../dao/GeneDAO";
-import {GeneSearcher} from "../domain/GeneSearcher";
 import {GeneBS} from "../bs/GeneBS";
-import {UserDTO} from "../domain/UserDTO";
-import {UserBS} from "../bs/UserBS"
-
-let Nt = require('ntseq');
 import * as jsonwebtoken from "jsonwebtoken"
 import {ServicesConstants} from "../constants/ServicesConstants";
+import {Db} from "mongodb";
+import {UserDTO} from "../domain/UserDTO";
+import {UserBS} from "../bs/UserBS";
+
+let Nt = require('ntseq');
 
 export class UserRestService {
     private _app: express.Router;
@@ -36,7 +36,7 @@ export class UserRestService {
                 mongoDbDTO.port = "27017";
                 mongoDbDTO.databaseName = "testDB";
 
-                let connection = await DbConnectionBS.getConnection(mongoDbDTO);
+                let connection: Db = await DbConnectionBS.getConnection(mongoDbDTO);
 
                 let userToRegister = new UserDTO();
                 userToRegister._username = req.body.username;
