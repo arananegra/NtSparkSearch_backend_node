@@ -28,9 +28,6 @@ module.exports = {
         filename: 'ntsparksearch_backend.js'
     },
 
-    // http://webpack.github.io/docs/configuration.html#devtool
-    devtool: 'inline-source-map',
-
     module: {
         rules: [
             {

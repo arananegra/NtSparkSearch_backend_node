@@ -203,10 +203,10 @@ export class UserRestService {
                 //
                 // console.log("busqueda finalizada con un total de ", listOfArrayWithMatches.length);
 
-                res.status(200).send(gene_dto);
+                res.status(200).send("hola");
 
             } catch (Exception) {
-                console.log("Es un exceptionnnn del servicioo!!!!", Exception);
+                console.log("Es un exceptionnnn del servicioo!!!!!!!!!!!", Exception);
                 res.status(500).send(Exception);
             }
         });

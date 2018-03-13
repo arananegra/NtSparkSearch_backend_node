@@ -6,9 +6,11 @@
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha -r ts-node/register ./test/src/**/*.spec.ts",
     "test:watch": "./node_modules/mocha/bin/mocha --watch-extensions ts --watch -r ts-node/register ./test/src/**/*.spec.ts",
+    "start": "./node_modules/npm/bin/npm-cli.js run-script build:dev && npm-run-all --parallel watch:dev watch:server",
+    "build:dev" : "./node_modules/webpack-cli/bin/webpack.js --config pre-compilation.js --mode development",
+    "watch:dev": "./node_modules/webpack-cli/bin/webpack.js --config pre-compilation --watch --mode development",
+    "watch:server": "cd dist/ && ../node_modules/nodemon/bin/nodemon.js ntsparksearch_backend.js",
     "build": "./node_modules/webpack-cli/bin/webpack.js --config pro-compilation.js --mode production",
-    "start:dev": "./node_modules/webpack-cli/bin/webpack.js --config pre-compilation --watch --mode development",
-    "start:watch-server": "cd dist/ && ../node_modules/nodemon/bin/nodemon.js ntsparksearch_backend.js",
     "start:prod-cluster": "./node_modules/npm/bin/npm-cli.js run-script build && cd dist/ && ../node_modules/pm2/bin/pm2 start ntsparksearch_backend.js -i 0",
     "start:monitor-cluster": "cd dist/ && ../node_modules/pm2/bin/pm2 monit",
     "stop:prod-cluster": "cd dist/ && ../node_modules/pm2/bin/pm2 stop all && ../node_modules/pm2/bin/pm2 delete all"
@@ -69,6 +71,7 @@
     "webpack-cli": "^2.0.11",
     "webpack-dev-server": "^3.1.1",
     "webpack-node-externals": "^1.6.0",
-    "npm": "^5.7.1"
+    "npm": "^5.7.1",
+    "npm-run-all": "^4.1.2"
   }
 }
