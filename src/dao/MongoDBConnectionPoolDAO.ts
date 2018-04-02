@@ -36,7 +36,7 @@ export class MongoDBConnectionPoolDAO {
     }
 
 
-    public getConnectionPool(): any {
+    public getConnectionPool(): Db {
         return this._connectionPool;
     }
 }
