@@ -1,6 +1,6 @@
-
 import {MongoDBConfigurationDTO} from "../domain/MongoDBConfigurationDTO";
 import {MongoDBConnectionPoolDAO} from "../dao/MongoDBConnectionPoolDAO";
+import {Db} from "mongodb";
 
 export class DbConnectionBS {
 
@@ -8,7 +8,7 @@ export class DbConnectionBS {
 
     }
 
-    public static async getConnection(connectionConfiguration: MongoDBConfigurationDTO): Promise<any> {
+    public static async getConnection(connectionConfiguration: MongoDBConfigurationDTO): Promise<Db> {
 
         try {
             let daoInstace = await MongoDBConnectionPoolDAO.getInstance(connectionConfiguration);

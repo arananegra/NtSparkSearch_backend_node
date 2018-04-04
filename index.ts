@@ -2,12 +2,15 @@
 import "reflect-metadata";
 import * as express from "express";
 import * as bodyParser from "body-parser";
+import * as jwt from "express-jwt"
 //Own files imports
 import {MainServices} from "./src/rest-api/MainServices";
 import {graphqlExpress, graphiqlExpress} from "apollo-server-express"
 import {makeExecutableSchema} from "graphql-tools";
 import {MongoDBConfigurationDTO} from "./src/domain/MongoDBConfigurationDTO";
 import {DbConnectionBS} from "./src/bs/DbConnectionBS";
+import {ServicesRouteConstants} from "./src/constants/ServicesRouteConstants";
+
 
 //Global variables declaration
 let app: express.Application = express();
@@ -48,7 +51,6 @@ const graphQLSchema = makeExecutableSchema({
     resolvers,
 });
 
-
 //Enable CORS
 app.use(function (req: express.Request, res: express.Response, next: express.NextFunction) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -57,8 +59,32 @@ app.use(function (req: express.Request, res: express.Response, next: express.Nex
     next();
 });
 
+// JWT Security middleware
+let jwtCheck = jwt({
+    secret: "mySecret",
+    getToken: (req)  => {
+        if (req.headers.token) {
+            return req.headers.token;
+        } else {
+            return null;
+        }
+    }
+}).unless({path: [ServicesRouteConstants.BASE_API + ServicesRouteConstants.REGISTER_SERVICE,
+        ServicesRouteConstants.BASE_API + ServicesRouteConstants.LOGIN_SERVICE]});
+
+// Enable the use of the jwtCheck middleware in all of our routes
+app.use(jwtCheck);
+
+// Function fallback for Auth errors
+
+app.use(function (err, req, res, next) {
+    if (err.constructor.name === 'UnauthorizedError') {
+        res.status(401).send(err);
+    }
+});
+
 //Url context before services name
-app.use('/api', router);
+app.use(ServicesRouteConstants.BASE_API, router);
 
 // The GraphQL endpoint
 app.use('/graphql',
