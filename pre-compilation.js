@@ -1,79 +1,49 @@
 let path = require('path');
-let webpack = require("webpack");
-//let nodeExternals = require('webpack-node-externals');
-
 let basePath = __dirname;
+let nodeExternals = require('webpack-node-externals');
 
-    let config = {
-        context: path.join(basePath, 'src'),
-        resolve: {
-            // .js is required for react imports.
-            // .tsx is for our app entry point.
-            // .ts is optional, in case you will be importing any regular ts files.
-            extensions: ['.ts', '.tsx', '.js', '.jsx']
-        },
-        target: "node",
-        //externals: [nodeExternals()],
+module.exports = {
+    context: path.join(basePath, 'src'),
+    resolve: {
+        // .js is required for react imports.
+        // .tsx is for our app entry point.
+        // .ts is optional, in case you will be importing any regular ts files.
+        extensions: ['.ts', '.tsx', '.js', '.jsx']
+    },
+    target: "node",
+    externals: [nodeExternals()],
 
-        node: {
-            fs: "empty",
-            net: "empty",
-            tls: "empty"
-        },
-        entry: {
-            app: [
-                '../index.ts'
-            ]
-        },
-        output: {
-            path: path.join(basePath, './dist'),
-            filename: 'ntsparksearch_backend.js'
-        },
-
-        //https://webpack.github.io/docs/webpack-dev-server.html#webpack-dev-server-cli
-        devServer: {
-            contentBase: './dist', //Content base
-            inline: true, //Enable watch and live reload
-            host: '0.0.0.0',
-            port: 3002,
-            hot: true
-        },
-
-        // http://webpack.github.io/docs/configuration.html#devtool
-        devtool: 'inline-source-map',
-
-        module: {
-            rules: [
-                {
-                    test: /\.(ts|tsx)$/,
-                    exclude: /node_modules/,
-                    use: [{
-                        loader: 'awesome-typescript-loader',
-                    }]
-                },
-                {
-                    test: /\.(js)$/,
-                    exclude: /node_modules|\.spec\.js$/,
-                    loader: 'babel-loader'
-                },
-                {
-                    test: /\.json$/,
-                    exclude: /node_modules/,
-                    loader: 'json-loader',
-                },
-                {
-                    test: /\.(ts|tsx)/,
-                    exclude: /(node_modules|spec)/,
-                    loaders: ['istanbul-instrumenter-loader'],
-                    enforce: 'post'
-                }
-            ],
-        },
-
-        plugins: [
+    node: {
+        fs: "empty",
+        net: "empty",
+        tls: "empty"
+    },
+    entry: {
+        app: [
+            '../index.ts'
         ]
-    }
+    },
+    output: {
+        path: path.join(basePath, './dist'),
+        filename: 'ntsparksearch_backend.js'
+    },
 
-module.exports = config;
+    module: {
+        rules: [
+            {
+                test: /\.(ts|tsx)$/,
+                exclude: /node_modules/,
+                use: [{
+                    loader: 'ts-loader'
+                }]
+            },
+            {
+                test: /\.json$/,
+                exclude: /node_modules/,
+                loader: 'json-loader',
+            }
+        ],
+    },
+};
 
 

@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "outDir": "./dist/",
+    "lib": ["es6", "dom"],
+    "target": "es5",
     "module": "commonjs",
     "declaration": false,
     "noImplicitAny": false,
@@ -9,11 +11,17 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "noLib": false,
-    "lib": ["es2015", "dom"],
     "preserveConstEnums": true,
+    "jsx": "react",
     "suppressImplicitAnyIndexErrors": true,
-    "types": ["webpack-env", "core-js"]
+    "types": [
+      "webpack-env",
+      "core-js"
+    ]
   },
+  "include": [
+    "./src/"
+  ],
   "compileOnSave": false,
   "exclude": [
     "node_modules"

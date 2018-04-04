@@ -1,7 +1,12 @@
 export class DatabaseConstants {
-    public static APPENCO_DATABASE_USER: string = "APPENCO_DATABASE_USER";
-    public static APPENCO_DATABASE_HOST: string = "APPENCO_DATABASE_HOST";
-    public static APPENCO_DATABASE_PASSWORD: string = "APPENCO_DATABASE_PASSWORD";
-    public static APPENCO_DATABASE_PORT: string = "APPENCO_DATABASE_PORT";
-    public static APPENCO_DATABASE_NAME: string = "APPENCO_DATABASE_NAME";
+    public static CLIENT_REFERENCE: string = "localhost";
+    public static PORT: string = "27017";
+
+    public static UNFILTERED_COLLECTION_NAME = "unfilteredGenes";
+    public static FILTERED_COLLECTION_NAME = "filteredGenes";
+
+    public static GENE_ID_FIELD_NAME = "_geneId";
+
+    public static USERNAME_FIELD_NAME = "_username";
+    public static EMAIL_FIELD_NAME = "_email";
 }
